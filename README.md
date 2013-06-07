@@ -23,11 +23,11 @@ Run `composer install` or `composer update` to install the package.
 Add the following to your `providers` array in `config/app.php`:
 
 ```php
-	'providers' => array(
-		// ...
+'providers' => array(
+	// ...
 
-		'Felixkiss\UniqueWithValidator\UniqueWithValidatorServiceProvider',
-	),
+	'Felixkiss\UniqueWithValidator\UniqueWithValidatorServiceProvider',
+),
 ```
 
 ## Usage
@@ -42,3 +42,77 @@ $rules = array(
 
 See the [Validation documentation](http://laravel.com/docs/validation) of Laravel 4.
 
+## Example
+
+Pretend you have a `users` table in your database plus `User` model like this:
+
+```php
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+
+class CreateUsersTable extends Migration {
+
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('users', function(Blueprint $table) {
+            $table->increments('id');
+            
+            $table->timestamps();
+
+            $table->string('first_name');
+            $table->string('last_name');
+
+            $table->unique(array('first_name', 'last_name'));
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('users');
+    }
+
+}
+```
+
+```php
+<?php
+
+class User extends Eloquent { }
+```
+
+Now you can validate a given `first_name`, `last_name` combination with something like this:
+
+```php
+Route::post('test', function() {
+	$rules = array(
+		'first_name' => 'required|unique_with:users,last_name',
+		'last_name' => 'required',
+	);
+
+	$validator = Validator::make(Input::all(), $rules);
+
+	if($validator->fails())
+	{
+		return Redirect::back()->withErrors($validator);
+	}
+
+	$user = new User;
+	$user->first_name = Input::get('first_name');
+	$user->last_name = Input::get('last_name');
+	$user->save();
+
+	return Redirect::home()->with('success', 'User created!');
+});
+```
