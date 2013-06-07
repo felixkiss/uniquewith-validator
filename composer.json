@@ -1,0 +1,27 @@
+{
+    "name": "felixkiss/uniquewith-validator",
+    "description": "Custom Laravel 4 Validator for combined unique indexes",
+    "keywords": ["laravel"],
+    "homepage": "https://github.com/felixkiss/uniquewith-validator",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Felix Kiss",
+            "email": "felix@felixkiss.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.0.x",
+        "illuminate/validation": "4.0.x"
+    },
+    "require-dev": {
+        "mockery/mockery": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "Felixkiss\\UniqueWithValidator": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
