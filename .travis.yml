@@ -9,3 +9,6 @@ before_script:
   - php composer.phar install --dev
 
 script: phpunit
+
+notifications:
+  campfire: cGB6Z+Fg8ZLBE45zdwRJU7CzMixFRm7g0KeKI+23Rx8RhhD3v4LQD7n6HTOQ\nREf6VwuDXopd4B47bK8aK97Q3MOEzIzR6lDnk9ByJwZgv01WZ9cJu8n56cE2\nKNYxhuNmcvbf5DRU4yX89yoBrDj0+KzEhCJIT1SEqBdWdHFYQFg=
