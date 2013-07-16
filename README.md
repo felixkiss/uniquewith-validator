@@ -15,7 +15,7 @@ In your `composer.json` file:
 	"require": {
 		"laravel/framework": "4.0.*",
 		// ...
-		"felixkiss/uniquewith-validator"
+		"felixkiss/uniquewith-validator": "dev-master"
 	}
 }
 ```
