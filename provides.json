@@ -1,5 +1,5 @@
 {
-  "providers": [
-    "Felixkiss\\UniqueWithValidator\\UniqueWithValidatorServiceProvider"
-  ]
+    "providers": [
+        "Felixkiss\\UniqueWithValidator\\UniqueWithValidatorServiceProvider"
+    ]
 }

@@ -1,5 +1,5 @@
 <?php
 
 return array(
-	'unique_with' => 'This combination of :fields already exists.',
+    'unique_with' => 'This combination of :fields already exists.',
 );

@@ -12,11 +12,11 @@ In your `composer.json` file:
 
 ```json
 {
-	"require": {
-		"laravel/framework": "4.0.*",
-		// ...
-		"felixkiss/uniquewith-validator": "dev-master"
-	}
+    "require": {
+        "laravel/framework": "4.0.*",
+        // ...
+        "felixkiss/uniquewith-validator": "dev-master"
+    }
 }
 ```
 
@@ -26,9 +26,9 @@ Add the following to your `providers` array in `config/app.php`:
 
 ```php
 'providers' => array(
-	// ...
+    // ...
 
-	'Felixkiss\UniqueWithValidator\UniqueWithValidatorServiceProvider',
+    'Felixkiss\UniqueWithValidator\UniqueWithValidatorServiceProvider',
 ),
 ```
 
@@ -38,7 +38,7 @@ Use it like any `Validator` rule:
 
 ```php
 $rules = array(
-	'<field1>' => 'unique_with:<table>,<field2>[,<field3>...]',
+    '<field1>' => 'unique_with:<table>,<field2>[,<field3>...]',
 );
 ```
 
@@ -98,23 +98,23 @@ Now you can validate a given `first_name`, `last_name` combination with somethin
 
 ```php
 Route::post('test', function() {
-	$rules = array(
-		'first_name' => 'required|unique_with:users,last_name',
-		'last_name' => 'required',
-	);
+    $rules = array(
+        'first_name' => 'required|unique_with:users,last_name',
+        'last_name' => 'required',
+    );
 
-	$validator = Validator::make(Input::all(), $rules);
+    $validator = Validator::make(Input::all(), $rules);
 
-	if($validator->fails())
-	{
-		return Redirect::back()->withErrors($validator);
-	}
+    if($validator->fails())
+    {
+        return Redirect::back()->withErrors($validator);
+    }
 
-	$user = new User;
-	$user->first_name = Input::get('first_name');
-	$user->last_name = Input::get('last_name');
-	$user->save();
+    $user = new User;
+    $user->first_name = Input::get('first_name');
+    $user->last_name = Input::get('last_name');
+    $user->save();
 
-	return Redirect::home()->with('success', 'User created!');
+    return Redirect::home()->with('success', 'User created!');
 });
 ```
