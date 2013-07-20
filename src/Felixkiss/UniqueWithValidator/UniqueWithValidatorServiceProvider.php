@@ -10,26 +10,17 @@ class UniqueWithValidatorServiceProvider extends ServiceProvider
 	 *
 	 * @var bool
 	 */
-	protected $defer = false;
+	protected $defer = true;
 
 	/**
-     * Bootstrap the application events.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $this->package('felixkiss/uniquewith-validator');
-
-        // Registering the validator extension
-        $this->app['validator']->resolver(function($translator, $data, $rules, $messages)
-        {
-        	// Set custom validation error messages
-        	$messages['unique_with'] = $translator->get('uniquewith-validator::validation.unique_with');
-
-        	return new ValidatorExtension($translator, $data, $rules, $messages);
-        });
-    }
+	 * Bootstrap the application events.
+	 *
+	 * @return void
+	 */
+	public function boot()
+	{
+		$this->package('felixkiss/uniquewith-validator');
+	}
 
 	/**
 	 * Register the service provider.
@@ -38,7 +29,14 @@ class UniqueWithValidatorServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-		//
+		// Registering the validator extension
+		$this->app['validator']->resolver(function($translator, $data, $rules, $messages)
+		{
+			// Set custom validation error messages
+			$messages['unique_with'] = $translator->get('uniquewith-validator::validation.unique_with');
+
+			return new ValidatorExtension($translator, $data, $rules, $messages);
+		});
 	}
 
 	/**
