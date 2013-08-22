@@ -127,4 +127,79 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($validator->fails());
     }
+
+    public function testReadsParametersWithoutExplicitColumnNames()
+    {
+        $this->rules = array(
+            'first_name' => 'unique_with:users,middle_name,last_name'
+        );
+        $this->data = array(
+            'first_name' => 'Foo',
+            'middle_name' => 'Bar',
+            'last_name' => 'Baz',
+        );
+        $validator = new ValidatorExtension(
+            $this->translator,
+            $this->data,
+            $this->rules,
+            $this->messages
+        );
+        $validator->setPresenceVerifier($this->presenceVerifier);
+
+        $this->presenceVerifier->shouldReceive('getCount')
+                               ->with('users', 'first_name', 'Foo', null, null, array('middle_name' => 'Bar', 'last_name' => 'Baz'))
+                               ->once();
+
+        $validator->fails();
+    }
+
+    public function testReadsParametersWithExplicitColumnNames()
+    {
+        $this->rules = array(
+            'first_name' => 'unique_with:users,middle_name = mid_name,last_name=sur_name'
+        );
+        $this->data = array(
+            'first_name' => 'Foo',
+            'middle_name' => 'Bar',
+            'last_name' => 'Baz',
+        );
+        $validator = new ValidatorExtension(
+            $this->translator,
+            $this->data,
+            $this->rules,
+            $this->messages
+        );
+        $validator->setPresenceVerifier($this->presenceVerifier);
+
+        $this->presenceVerifier->shouldReceive('getCount')
+                               ->with('users', 'first_name', 'Foo', null, null, array('mid_name' => 'Bar', 'sur_name' => 'Baz'))
+                               ->once();
+
+        $validator->fails();
+    }
+
+    public function testReadsPrimaryParameterWithExplicitColumnNames()
+    {
+        $this->rules = array(
+            'first_name' => 'unique_with:users,first_name = name,middle_name,last_name=sur_name'
+        );
+        $this->data = array(
+            'first_name' => 'Foo',
+            'middle_name' => 'Bar',
+            'last_name' => 'Baz',
+        );
+        $validator = new ValidatorExtension(
+            $this->translator,
+            $this->data,
+            $this->rules,
+            $this->messages
+        );
+        $validator->setPresenceVerifier($this->presenceVerifier);
+
+        $this->presenceVerifier->shouldReceive('getCount')
+                               ->with('users', 'name', 'Foo', null, null, array('middle_name' => 'Bar', 'sur_name' => 'Baz'))
+                               ->once();
+
+        $validator->fails();
+    }
 }

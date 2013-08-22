@@ -44,6 +44,19 @@ $rules = array(
 
 See the [Validation documentation](http://laravel.com/docs/validation) of Laravel 4.
 
+### Specify different column names in the database
+
+If your input field names are different from the corresponding database columns, 
+you can specify the column names explicitly.
+
+e.g. your input contains a field 'last_name', but the column in your database is called 'sur_name':
+```php
+$rules = array(
+    'first_name' => 'unique_with:users, middle_name, last_name = sur_name',
+);
+```
+
+
 ## Example
 
 Pretend you have a `users` table in your database plus `User` model like this:

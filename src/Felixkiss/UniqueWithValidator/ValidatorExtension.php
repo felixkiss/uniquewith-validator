@@ -36,7 +36,28 @@ class ValidatorExtension extends Validator
 
         for($i = 1; $i < sizeof($parameters); $i++)
         {
-            $extra[$parameters[$i]] = array_get($this->data, $parameters[$i]);
+            // Figure out whether field_name is the same as column_name
+            // or column_name is explicitly specified.
+            //
+            // case 1:
+            //     $parameter = 'last_name'
+            //     => field_name = column_name = 'last_name'
+            // case 2:
+            //     $parameter = 'last_name=sur_name'
+            //     => field_name = 'last_name', column_name = 'sur_name'
+            $parameter = explode('=', $parameters[$i], 2);
+            $field_name = trim($parameter[0]);
+
+            if(count($parameter) > 1)
+                $column_name = trim($parameter[1]);
+            else
+                $column_name = $field_name;
+
+            // Figure out whether main field_name has an explicitly specified column_name
+            if($field_name == $column)
+                $column = $column_name;
+            else
+                $extra[$column_name] = array_get($this->data, $field_name);
         }
 
         // The presence verifier is responsible for counting rows within this store
