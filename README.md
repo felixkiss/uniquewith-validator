@@ -118,3 +118,6 @@ Route::post('test', function() {
     return Redirect::home()->with('success', 'User created!');
 });
 ```
+# License
+
+MIT
