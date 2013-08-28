@@ -20,16 +20,8 @@ class UniqueWithValidatorServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->package('felixkiss/uniquewith-validator');
-    }
 
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        // Registering the validator extension
+        // Registering the validator extension with the validator factory
         $this->app['validator']->resolver(function($translator, $data, $rules, $messages)
         {
             // Set custom validation error messages
@@ -40,12 +32,22 @@ class UniqueWithValidatorServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        
+    }
+
+    /**
      * Get the services provided by the provider.
      *
      * @return array
      */
     public function provides()
     {
-        return array('validator');
+        return array();
     }
 }
