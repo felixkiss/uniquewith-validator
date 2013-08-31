@@ -38,7 +38,7 @@ Use it like any `Validator` rule:
 
 ```php
 $rules = array(
-    '<field1>' => 'unique_with:<table>,<field2>[,<field3>...]',
+    '<field1>' => 'unique_with:<table>,<field2>[,<field3>,...,<ignore_rowid>]',
 );
 ```
 
@@ -130,6 +130,17 @@ Route::post('test', function() {
 
     return Redirect::home()->with('success', 'User created!');
 });
+```
+
+You can also specify a row id to ignore (useful to solve unique constraint when updating)
+
+This will ignore row with id 2
+
+```php
+$rules = array(
+    'first_name' => 'required|unique_with:users,last_name,2',
+    'last_name' => 'required',
+);
 ```
 # License
 
