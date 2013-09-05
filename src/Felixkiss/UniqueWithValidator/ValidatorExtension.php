@@ -38,12 +38,15 @@ class ValidatorExtension extends Validator
 		$parameters_length = sizeof($parameters);
 		$ignore_id = null;
 		
-		if ($parameters_length > 1) {
+		if ($parameters_length > 1) 
+		{
 			$last_param = $parameters[$parameters_length-1];
 			$last_param_value = str_replace(" ", "", $parameters[$parameters_length-1]);
-			if (preg_match('/^[1-9][0-9]*$/', $last_param_value)) {
+			if (preg_match('/^[1-9][0-9]*$/', $last_param_value)) 
+			{
 				$last_param_value = intval($last_param_value);
-				if ($last_param_value > 0) {
+				if ($last_param_value > 0) 
+				{
 					$ignore_id = $last_param_value;
 					$parameters_length--;
 				}
