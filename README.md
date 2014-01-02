@@ -15,7 +15,7 @@ In your `composer.json` file:
     "require": {
         "laravel/framework": "4.0.*",
         // ...
-        "felixkiss/uniquewith-validator": "dev-master"
+        "felixkiss/uniquewith-validator": "1.0.*"
     }
 }
 ```
@@ -46,7 +46,7 @@ See the [Validation documentation](http://laravel.com/docs/validation) of Larave
 
 ### Specify different column names in the database
 
-If your input field names are different from the corresponding database columns, 
+If your input field names are different from the corresponding database columns,
 you can specify the column names explicitly.
 
 e.g. your input contains a field 'last_name', but the column in your database is called 'sur_name':
@@ -78,7 +78,7 @@ class CreateUsersTable extends Migration {
     {
         Schema::create('users', function(Blueprint $table) {
             $table->increments('id');
-            
+
             $table->timestamps();
 
             $table->string('first_name');
