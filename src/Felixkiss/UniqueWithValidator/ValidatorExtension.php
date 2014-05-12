@@ -93,9 +93,9 @@ class ValidatorExtension extends Validator
 
     public function replaceUniqueWith($message, $attribute, $rule, $parameters)
     {
-        $fields = array($attribute);
+        $fields = array($this->getAttribute($attribute));
         for($i = 1; $i < sizeof($parameters); $i++)
-            $fields[] = $parameters[$i];
+            $fields[] = $this->getAttribute($parameters[$i]);
         $fields = implode(', ', $fields);
         return str_replace(':fields', $fields, $message);
     }
