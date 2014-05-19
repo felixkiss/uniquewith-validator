@@ -19,6 +19,8 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         );
 
         $this->presenceVerifier = Mockery::mock('Illuminate\Validation\PresenceVerifierInterface');
+
+        $this->messages = array();
     }
 
     public function tearDown()
