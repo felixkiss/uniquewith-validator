@@ -19,6 +19,8 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         );
 
         $this->presenceVerifier = Mockery::mock('Illuminate\Validation\PresenceVerifierInterface');
+
+        $this->messages = array();
     }
 
     public function tearDown()
@@ -33,9 +35,9 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
             'last_name' => 'Bar',
         );
         $validator = new ValidatorExtension(
-            $this->translator, 
-            $this->data, 
-            $this->rules, 
+            $this->translator,
+            $this->data,
+            $this->rules,
             $this->messages
         );
         $validator->setPresenceVerifier($this->presenceVerifier);
@@ -56,9 +58,9 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
             'last_name' => 'Bar',
         );
         $validator = new ValidatorExtension(
-            $this->translator, 
-            $this->data, 
-            $this->rules, 
+            $this->translator,
+            $this->data,
+            $this->rules,
             $this->messages
         );
         $validator->setPresenceVerifier($this->presenceVerifier);
@@ -84,9 +86,9 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
             'last_name' => 'Baz',
         );
         $validator = new ValidatorExtension(
-            $this->translator, 
-            $this->data, 
-            $this->rules, 
+            $this->translator,
+            $this->data,
+            $this->rules,
             $this->messages
         );
         $validator->setPresenceVerifier($this->presenceVerifier);
@@ -111,9 +113,9 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
             'last_name' => 'Baz',
         );
         $validator = new ValidatorExtension(
-            $this->translator, 
-            $this->data, 
-            $this->rules, 
+            $this->translator,
+            $this->data,
+            $this->rules,
             $this->messages
         );
         $validator->setPresenceVerifier($this->presenceVerifier);
@@ -202,20 +204,20 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
 
         $validator->fails();
     }
-	
+
     public function testValidatesExistingCombinationWithIgnoreID()
     {
         $this->data = array(
             'first_name' => 'Foo',
             'last_name' => 'Bar',
         );
-		$this->rules = array(
+        $this->rules = array(
             'first_name' => 'unique_with:users,last_name,1'
         );
         $validator = new ValidatorExtension(
-            $this->translator, 
-            $this->data, 
-            $this->rules, 
+            $this->translator,
+            $this->data,
+            $this->rules,
             $this->messages
         );
         $validator->setPresenceVerifier($this->presenceVerifier);
@@ -229,8 +231,8 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($validator->fails());
     }
-		
-	public function testValidatesNewCombinationWithMoreThanTwoFieldsWithIgnoreID()
+
+    public function testValidatesNewCombinationWithMoreThanTwoFieldsWithIgnoreID()
     {
         $this->rules = array(
             'first_name' => 'unique_with:users,middle_name,last_name,1'
@@ -241,9 +243,9 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
             'last_name' => 'Baz',
         );
         $validator = new ValidatorExtension(
-            $this->translator, 
-            $this->data, 
-            $this->rules, 
+            $this->translator,
+            $this->data,
+            $this->rules,
             $this->messages
         );
         $validator->setPresenceVerifier($this->presenceVerifier);
@@ -256,8 +258,8 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($validator->fails());
     }
-	
-	public function testReadsParametersWithExplicitColumnNamesWithIgnoreID()
+
+    public function testReadsParametersWithExplicitColumnNamesWithIgnoreID()
     {
         $this->rules = array(
             'first_name' => 'unique_with:users,middle_name = mid_name,last_name=sur_name,1'
@@ -281,9 +283,9 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
 
         $validator->fails();
     }
-	
-	
-	public function testReadsPrimaryParameterWithExplicitColumnNamesWithIgnoreID()
+
+
+    public function testReadsPrimaryParameterWithExplicitColumnNamesWithIgnoreID()
     {
         $this->rules = array(
             'first_name' => 'unique_with:users,first_name = name,middle_name,last_name=sur_name,1'
@@ -303,6 +305,30 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
 
         $this->presenceVerifier->shouldReceive('getCount')
                                ->with('users', 'name', 'Foo', 1, null, array('middle_name' => 'Bar', 'sur_name' => 'Baz'))
+                               ->once();
+
+        $validator->fails();
+    }
+
+    public function testCustomColumnNameForIgnoreId()
+    {
+        $this->rules = array(
+            'first_name' => 'unique_with:users,first_name,last_name,1 = UserKey',
+        );
+        $this->data = array(
+            'first_name' => 'Foo',
+            'last_name'  => 'Bar',
+        );
+        $validator = new ValidatorExtension(
+            $this->translator,
+            $this->data,
+            $this->rules,
+            $this->messages
+        );
+        $validator->setPresenceVerifier($this->presenceVerifier);
+
+        $this->presenceVerifier->shouldReceive('getCount')
+                               ->with('users', 'first_name', 'Foo', 1, 'UserKey', array('last_name' => 'Bar'))
                                ->once();
 
         $validator->fails();
