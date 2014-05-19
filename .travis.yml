@@ -1,14 +1,18 @@
 language: php
 
-php: 
+php:
   - 5.3
   - 5.4
   - 5.5
+  - 5.6
+  - hhvm
 
 before_script:
-  - composer install --dev
+  - composer self-update
+  - composer install --prefer-source --no-interaction --dev
 
 script: phpunit
 
 notifications:
-  campfire: cGB6Z+Fg8ZLBE45zdwRJU7CzMixFRm7g0KeKI+23Rx8RhhD3v4LQD7n6HTOQ\nREf6VwuDXopd4B47bK8aK97Q3MOEzIzR6lDnk9ByJwZgv01WZ9cJu8n56cE2\nKNYxhuNmcvbf5DRU4yX89yoBrDj0+KzEhCJIT1SEqBdWdHFYQFg=
+  slack:
+    secure: pN9hnA83mJGg783wcvRpnP8mvytMOQtJ4/FxhimUcoCE/s1YhjKOQv5ivV2l2Qn/OJsEhq8qkzKIQJ2cQ4KtLruMkhWTvn+xh5KgxFJOYFo+YQAJDJ/SoWDOaH/0yMzf+zF82nJTg0WorkSxZOaPYD2HA1xFUoz/Wjs3eaXGoco=
