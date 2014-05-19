@@ -142,6 +142,16 @@ $rules = array(
     'last_name' => 'required',
 );
 ```
+
+To specify a custom column name for the id, pass it like
+
+```php
+$rules = array(
+    'first_name' => 'required|unique_with:users,last_name,2 = custom_id_column',
+    'last_name' => 'required',
+);
+```
+
 # License
 
 MIT

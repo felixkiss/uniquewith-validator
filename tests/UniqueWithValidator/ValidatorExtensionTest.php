@@ -307,4 +307,28 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
 
         $validator->fails();
     }
+
+    public function testCustomColumnNameForIgnoreId()
+    {
+        $this->rules = array(
+            'first_name' => 'unique_with:users,first_name,last_name,1 = UserKey',
+        );
+        $this->data = array(
+            'first_name' => 'Foo',
+            'last_name'  => 'Bar',
+        );
+        $validator = new ValidatorExtension(
+            $this->translator,
+            $this->data,
+            $this->rules,
+            $this->messages
+        );
+        $validator->setPresenceVerifier($this->presenceVerifier);
+
+        $this->presenceVerifier->shouldReceive('getCount')
+                               ->with('users', 'first_name', 'Foo', 1, 'UserKey', array('last_name' => 'Bar'))
+                               ->once();
+
+        $validator->fails();
+    }
 }
