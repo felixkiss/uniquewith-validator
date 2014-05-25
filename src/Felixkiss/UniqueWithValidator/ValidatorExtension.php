@@ -22,7 +22,11 @@ class ValidatorExtension extends Validator
      */
     public function validateUniqueWith($attribute, $value, $parameters)
     {
-        $table = $parameters[0];
+        // cleaning: trim whitespace
+        $parameters = array_map('trim', $parameters);
+
+        // first item equals table name
+        $table = array_shift($parameters);
 
         // The second parameter position holds the name of the column that
         // needs to be verified as unique. If this parameter isn't specified
@@ -39,30 +43,29 @@ class ValidatorExtension extends Validator
         // Check if last parameter is an integer. If it is, then it will
         // ignore the row with the specified id - useful when updating a row
         list($ignore_id, $ignore_column) = $this->getIgnore($parameters);
-        $parameters_length = sizeof($parameters);
 
-        for($i = 1; $i < $parameters_length; $i++)
+        // Figure out whether field_name is the same as column_name
+        // or column_name is explicitly specified.
+        //
+        // case 1:
+        //     $parameter = 'last_name'
+        //     => field_name = column_name = 'last_name'
+        // case 2:
+        //     $parameter = 'last_name=sur_name'
+        //     => field_name = 'last_name', column_name = 'sur_name'
+        foreach ($parameters as $parameter)
         {
-            // Figure out whether field_name is the same as column_name
-            // or column_name is explicitly specified.
-            //
-            // case 1:
-            //     $parameter = 'last_name'
-            //     => field_name = column_name = 'last_name'
-            // case 2:
-            //     $parameter = 'last_name=sur_name'
-            //     => field_name = 'last_name', column_name = 'sur_name'
-            $parameter = explode('=', $parameters[$i], 2);
-            $field_name = trim($parameter[0]);
+            $parameter = array_map('trim', explode('=', $parameter, 2));
+            $field_name = $parameter[0];
 
-            if(count($parameter) > 1)
-                $column_name = trim($parameter[1]);
+            if (count($parameter) > 1)
+                $column_name = $parameter[1];
             else
                 $column_name = $field_name;
 
             // Figure out whether main field_name has an explicitly specified
             // column_name
-            if($field_name == $column)
+            if ($field_name == $column)
                 $column = $column_name;
             else
                 $extra[$column_name] = array_get($this->data, $field_name);
@@ -83,50 +86,39 @@ class ValidatorExtension extends Validator
 
     public function replaceUniqueWith($message, $attribute, $rule, $parameters)
     {
-        $fields = array($attribute);
-        for($i = 1; $i < sizeof($parameters); $i++)
-            $fields[] = $parameters[$i];
-        $fields = implode(', ', $fields);
-        return str_replace(':fields', $fields, $message);
+        // merge primary field with conditional fields
+        $fields = array($attribute) + $parameters;
+
+        // get full language support due to mapping to validator getAttribute
+        // function
+        $fields = array_map(array($this, 'getAttribute'), $fields);
     }
 
     /**
      * Returns an array with value and column name for an optional ignore.
+     * Shaves of the ignore_id from the end of the array, if there is one.
      *
      * @param  array $parameters
      * @return array [$ignoreId, $ignoreColumn]
      */
     private function getIgnore(&$parameters)
     {
-        $parametersLength = sizeof($parameters);
+        $lastParam = end($parameters);
+        $lastParam = array_map('trim', explode('=', $lastParam));
 
-        if ($parametersLength <= 1)
+        // An ignore_id is only specified if the last param starts with a
+        // number greater than 1 (a valid id in the database)
+        if (!preg_match('/^[1-9][0-9]*$/', $lastParam[0]))
         {
             return array(null, null);
         }
 
-        $lastParam = $parameters[$parametersLength - 1];
-        $lastParamValue = str_replace(" ", "", $lastParam);
-        if (preg_match('/^[1-9][0-9]*$/', $lastParamValue))
-        {
-            $lastParamValue = intval($lastParamValue);
-            if ($lastParamValue > 0)
-            {
-                array_pop($parameters);
-                return array($lastParamValue, null);
-            }
-        }
-        else if (preg_match('/^[1-9][0-9]*=.*$/', $lastParamValue))
-        {
-            list($value, $columnName) = explode('=', $lastParamValue);
-            $value = intval(trim($value));
-            if ($value > 0)
-            {
-                array_pop($parameters);
-                return array($value, $columnName);
-            }
-        }
+        $ignoreId = $lastParam[0];
+        $ignoreColumn = (sizeof($lastParam) > 1) ? end($lastParam) : null;
 
-        return array(null, null);
+        // Shave of the ignore_id from the array for later processing
+        array_pop($parameters);
+
+        return array($ignoreId, $ignoreColumn);
     }
 }
