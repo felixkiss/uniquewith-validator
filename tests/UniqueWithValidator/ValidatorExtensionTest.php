@@ -43,10 +43,18 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         $validator->setPresenceVerifier($this->presenceVerifier);
 
         // No existing Object with this parameter set
-        $this->presenceVerifier->shouldReceive('getCount')
-                               ->with('users', 'first_name', 'Foo', null, null, array('last_name' => 'Bar'))
-                               ->once()
-                               ->andReturn(0);
+        $this->presenceVerifier
+             ->shouldReceive('getCount')
+             ->with(
+                   'users',
+                   'first_name',
+                   'Foo',
+                   null,
+                   null,
+                   array('last_name' => 'Bar')
+               )
+             ->once()
+             ->andReturn(0);
 
         $this->assertFalse($validator->fails());
     }
@@ -67,10 +75,18 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
 
         // One existing Object with this parameter set
         $this->translator->shouldReceive('trans')->andReturn('foo');
-        $this->presenceVerifier->shouldReceive('getCount')
-                               ->with('users', 'first_name', 'Foo', null, null, array('last_name' => 'Bar'))
-                               ->once()
-                               ->andReturn(1);
+        $this->presenceVerifier
+             ->shouldReceive('getCount')
+             ->with(
+                   'users',
+                   'first_name',
+                   'Foo',
+                   null,
+                   null,
+                   array('last_name' => 'Bar')
+               )
+             ->once()
+             ->andReturn(1);
 
         $this->assertTrue($validator->fails());
     }
@@ -94,10 +110,18 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         $validator->setPresenceVerifier($this->presenceVerifier);
 
         // No existing Object with this parameter set
-        $this->presenceVerifier->shouldReceive('getCount')
-                               ->with('users', 'first_name', 'Foo', null, null, array('middle_name' => 'Bar', 'last_name' => 'Baz'))
-                               ->once()
-                               ->andReturn(0);
+        $this->presenceVerifier
+             ->shouldReceive('getCount')
+             ->with(
+                   'users',
+                   'first_name',
+                   'Foo',
+                   null,
+                   null,
+                   array('middle_name' => 'Bar', 'last_name' => 'Baz')
+               )
+             ->once()
+             ->andReturn(0);
 
         $this->assertFalse($validator->fails());
     }
@@ -122,10 +146,18 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
 
         // One existing Object with this parameter set
         $this->translator->shouldReceive('trans')->andReturn('foo');
-        $this->presenceVerifier->shouldReceive('getCount')
-                               ->with('users', 'first_name', 'Foo', null, null, array('middle_name' => 'Bar', 'last_name' => 'Baz'))
-                               ->once()
-                               ->andReturn(1);
+        $this->presenceVerifier
+             ->shouldReceive('getCount')
+             ->with(
+                   'users',
+                   'first_name',
+                   'Foo',
+                   null,
+                   null,
+                   array('middle_name' => 'Bar', 'last_name' => 'Baz')
+               )
+             ->once()
+             ->andReturn(1);
 
         $this->assertTrue($validator->fails());
     }
@@ -148,9 +180,17 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         );
         $validator->setPresenceVerifier($this->presenceVerifier);
 
-        $this->presenceVerifier->shouldReceive('getCount')
-                               ->with('users', 'first_name', 'Foo', null, null, array('middle_name' => 'Bar', 'last_name' => 'Baz'))
-                               ->once();
+        $this->presenceVerifier
+             ->shouldReceive('getCount')
+             ->with(
+                   'users',
+                   'first_name',
+                   'Foo',
+                   null,
+                   null,
+                   array('middle_name' => 'Bar', 'last_name' => 'Baz')
+               )
+             ->once();
 
         $validator->fails();
     }
@@ -173,9 +213,17 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         );
         $validator->setPresenceVerifier($this->presenceVerifier);
 
-        $this->presenceVerifier->shouldReceive('getCount')
-                               ->with('users', 'first_name', 'Foo', null, null, array('mid_name' => 'Bar', 'sur_name' => 'Baz'))
-                               ->once();
+        $this->presenceVerifier
+             ->shouldReceive('getCount')
+             ->with(
+                   'users',
+                   'first_name',
+                   'Foo',
+                   null,
+                   null,
+                   array('mid_name' => 'Bar', 'sur_name' => 'Baz')
+               )
+             ->once();
 
         $validator->fails();
     }
@@ -198,9 +246,17 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         );
         $validator->setPresenceVerifier($this->presenceVerifier);
 
-        $this->presenceVerifier->shouldReceive('getCount')
-                               ->with('users', 'name', 'Foo', null, null, array('middle_name' => 'Bar', 'sur_name' => 'Baz'))
-                               ->once();
+        $this->presenceVerifier
+             ->shouldReceive('getCount')
+             ->with(
+                   'users',
+                   'name',
+                   'Foo',
+                   null,
+                   null,
+                   array('middle_name' => 'Bar', 'sur_name' => 'Baz')
+               )
+             ->once();
 
         $validator->fails();
     }
@@ -224,10 +280,18 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
 
         // One existing Object with this parameter set
         $this->translator->shouldReceive('trans')->andReturn('foo');
-        $this->presenceVerifier->shouldReceive('getCount')
-                               ->with('users', 'first_name', 'Foo', 1, null, array('last_name' => 'Bar'))
-                               ->once()
-                               ->andReturn(0);
+        $this->presenceVerifier
+             ->shouldReceive('getCount')
+             ->with(
+                   'users',
+                   'first_name',
+                   'Foo',
+                   1,
+                   null,
+                   array('last_name' => 'Bar')
+               )
+             ->once()
+             ->andReturn(0);
 
         $this->assertFalse($validator->fails());
     }
@@ -251,10 +315,18 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         $validator->setPresenceVerifier($this->presenceVerifier);
 
         // No existing Object with this parameter set
-        $this->presenceVerifier->shouldReceive('getCount')
-                               ->with('users', 'first_name', 'Foo', 1, null, array('middle_name' => 'Bar', 'last_name' => 'Baz'))
-                               ->once()
-                               ->andReturn(0);
+        $this->presenceVerifier
+             ->shouldReceive('getCount')
+             ->with(
+                   'users',
+                   'first_name',
+                   'Foo',
+                   1,
+                   null,
+                   array('middle_name' => 'Bar', 'last_name' => 'Baz')
+               )
+             ->once()
+             ->andReturn(0);
 
         $this->assertFalse($validator->fails());
     }
@@ -277,9 +349,17 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         );
         $validator->setPresenceVerifier($this->presenceVerifier);
 
-        $this->presenceVerifier->shouldReceive('getCount')
-                               ->with('users', 'first_name', 'Foo', 1, null, array('mid_name' => 'Bar', 'sur_name' => 'Baz'))
-                               ->once();
+        $this->presenceVerifier
+             ->shouldReceive('getCount')
+             ->with(
+                   'users',
+                   'first_name',
+                   'Foo',
+                   1,
+                   null,
+                   array('mid_name' => 'Bar', 'sur_name' => 'Baz')
+               )
+             ->once();
 
         $validator->fails();
     }
@@ -303,9 +383,17 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         );
         $validator->setPresenceVerifier($this->presenceVerifier);
 
-        $this->presenceVerifier->shouldReceive('getCount')
-                               ->with('users', 'name', 'Foo', 1, null, array('middle_name' => 'Bar', 'sur_name' => 'Baz'))
-                               ->once();
+        $this->presenceVerifier
+             ->shouldReceive('getCount')
+             ->with(
+                   'users',
+                   'name',
+                   'Foo',
+                   1,
+                   null,
+                   array('middle_name' => 'Bar', 'sur_name' => 'Baz')
+               )
+             ->once();
 
         $validator->fails();
     }
@@ -327,9 +415,17 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         );
         $validator->setPresenceVerifier($this->presenceVerifier);
 
-        $this->presenceVerifier->shouldReceive('getCount')
-                               ->with('users', 'first_name', 'Foo', 1, 'UserKey', array('last_name' => 'Bar'))
-                               ->once();
+        $this->presenceVerifier
+             ->shouldReceive('getCount')
+             ->with(
+                   'users',
+                   'first_name',
+                   'Foo',
+                   1,
+                   'UserKey',
+                   array('last_name' => 'Bar')
+               )
+             ->once();
 
         $validator->fails();
     }
