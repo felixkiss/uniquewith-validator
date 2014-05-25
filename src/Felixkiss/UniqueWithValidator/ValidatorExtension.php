@@ -15,10 +15,10 @@ class ValidatorExtension extends Validator
     /**
      * Usage: unique_with: table, column1, column2, ...
      *
-     * @param  [type] $attribute  [description]
-     * @param  [type] $value      [description]
-     * @param  [type] $parameters [description]
-     * @return [type]             [description]
+     * @param  string $attribute
+     * @param  mixed  $value
+     * @param  array $parameters
+     * @return boolean
      */
     public function validateUniqueWith($attribute, $value, $parameters)
     {
@@ -32,8 +32,6 @@ class ValidatorExtension extends Validator
         // needs to be verified as unique. If this parameter isn't specified
         // we will just assume that this column to be verified shares the
         // attribute's name.
-        //
-        // $column = isset($parameters[1]) ? $parameters[1] : $attribute;
         $column = $attribute;
 
         // Create $extra array with all other columns, so getCount() will
@@ -59,16 +57,24 @@ class ValidatorExtension extends Validator
             $field_name = $parameter[0];
 
             if (count($parameter) > 1)
+            {
                 $column_name = $parameter[1];
+            }
             else
+            {
                 $column_name = $field_name;
+            }
 
             // Figure out whether main field_name has an explicitly specified
             // column_name
             if ($field_name == $column)
+            {
                 $column = $column_name;
+            }
             else
+            {
                 $extra[$column_name] = array_get($this->data, $field_name);
+            }
         }
 
         // The presence verifier is responsible for counting rows within this
@@ -78,9 +84,12 @@ class ValidatorExtension extends Validator
         $verifier = $this->getPresenceVerifier();
 
         return $verifier->getCount(
-
-            $table, $column, $value, $ignore_id, $ignore_column, $extra
-
+            $table,
+            $column,
+            $value,
+            $ignore_id,
+            $ignore_column,
+            $extra
         ) == 0;
     }
 
