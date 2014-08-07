@@ -13,6 +13,7 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->translator = Mockery::mock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator->shouldReceive('get')->andReturn('');
 
         $this->rules = array(
             'first_name' => 'unique_with:users,last_name',

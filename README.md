@@ -152,6 +152,33 @@ $rules = array(
 );
 ```
 
+## Extending the Laravel Validator
+
+For simple validation rules that don't need translator or custom messages:
+```php
+Validator::extend('foo_bar', function($attribute, $value, $parameters)
+{
+    return ($attribute == 'foo' && $value == 'bar');
+});
+```
+
+For more sophisticated rules:
+```php
+class CustomValidator extends Felixkiss\UniqueWithValidator\ValidatorExtension
+{
+    public function validateOnlyApple($attribute, $value, $parameters)
+    {
+        // $this->translator, $this->messages, etc. available
+        return ($attribute == 'company' && $value == 'apple');
+    }
+}
+
+Validator::resolver(function($translator, $data, $rules, $messages)
+{
+    return new CustomValidator($translator, $data, $rules, $messages);
+});
+```
+
 # License
 
 MIT

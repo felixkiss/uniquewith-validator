@@ -10,6 +10,14 @@ class ValidatorExtension extends Validator
     public function __construct($translator, $data, $rules, $messages)
     {
         parent::__construct($translator, $data, $rules, $messages);
+
+        // Set custom validation error messages
+        if(!isset($this->messages['unique_with']))
+        {
+            $this->messages['unique_with'] = $this->translator->get(
+                'uniquewith-validator::validation.unique_with'
+            );
+        }
     }
 
     /**

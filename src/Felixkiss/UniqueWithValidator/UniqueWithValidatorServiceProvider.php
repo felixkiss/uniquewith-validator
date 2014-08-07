@@ -24,15 +24,12 @@ class UniqueWithValidatorServiceProvider extends ServiceProvider
         // Registering the validator extension with the validator factory
         $this->app['validator']->resolver(function($translator, $data, $rules, $messages)
         {
-            // Set custom validation error messages
-            if(!isset($messages['unique_with']))
-            {
-                $messages['unique_with'] = $translator->get(
-                    'uniquewith-validator::validation.unique_with'
-                );
-            }
-
-            return new ValidatorExtension($translator, $data, $rules, $messages);
+            return new ValidatorExtension(
+                $translator,
+                $data,
+                $rules,
+                $messages
+            );
         });
     }
 
