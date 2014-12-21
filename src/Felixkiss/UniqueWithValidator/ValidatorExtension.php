@@ -7,7 +7,7 @@ class ValidatorExtension extends Validator
     /**
      * Creates a new instance of ValidatorExtension
      */
-    public function __construct($translator, $data, $rules, $messages)
+    public function __construct($translator, $data, $rules, $messages, array $customAttributes = array())
     {
         // Set custom validation error messages
         if(!isset($messages['unique_with']))
@@ -17,7 +17,7 @@ class ValidatorExtension extends Validator
             );
         }
 
-        parent::__construct($translator, $data, $rules, $messages);
+        parent::__construct($translator, $data, $rules, $messages, $customAttributes);
     }
 
     /**
