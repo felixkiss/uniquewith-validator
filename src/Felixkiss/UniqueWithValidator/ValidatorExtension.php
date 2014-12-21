@@ -103,6 +103,9 @@ class ValidatorExtension extends Validator
 
     public function replaceUniqueWith($message, $attribute, $rule, $parameters)
     {
+        // remove trailing ID param if present
+        $this->getIgnore($parameters);
+
         // merge primary field with conditional fields
         $fields = array($attribute) + $parameters;
 

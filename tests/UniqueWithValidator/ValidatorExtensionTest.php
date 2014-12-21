@@ -98,12 +98,8 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
 
     public function testDefaultErrorMessageWorks()
     {
-        $this->testValidatesExistingCombination();
+        $this->setUpFailCaseTest();
 
-        $this->data = array(
-            'first_name' => 'Foo',
-            'last_name' => 'Bar',
-        );
         $validator = new ValidatorExtension(
             $this->translator,
             $this->data,
@@ -144,12 +140,8 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
     {
         $test_message = 'This is a test override message with :fields.';
 
-        $this->testValidatesExistingCombination();
+        $this->setUpFailCaseTest();
 
-        $this->data = array(
-            'first_name' => 'Foo',
-            'last_name' => 'Bar',
-        );
         $validator = new ValidatorExtension(
             $this->translator,
             $this->data,
@@ -185,6 +177,32 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('first_name', $errors);
         $this->assertTrue(isset($errors['first_name'][0]));
         $this->assertEquals('This is a test override message with first name, last name.', $errors['first_name'][0]);
+    }
+
+    public function testFieldsDoNotIncludeIDFieldInErrorMessage()
+    {
+        $this->setUpFailCaseTest();
+
+        $this->rules['first_name'] .= ',135899999';
+
+        $errors = $this->getValidatorExtensionMessages();
+
+        $this->assertTrue(strpos($errors['first_name'][0], '135899999') === false,
+            'Asserting that ID is not found in error message.');
+    }
+
+    public function testFieldsDoNotIncludeIDFieldInErrorMessageWithColumnSpecifier()
+    {
+        $this->setUpFailCaseTest();
+
+        $this->rules['first_name'] .= ',135899999=zyxtuvabc';
+
+        $errors = $this->getValidatorExtensionMessages();
+
+        $this->assertTrue(strpos($errors['first_name'][0], '135899999') === false,
+            'Asserting that ID is not found in error message.');
+        $this->assertTrue(strpos($errors['first_name'][0], 'zyxtuvabc') === false,
+            'Asserting that ID column is not found in error message.');
     }
 
     public function testValidatesNewCombinationWithMoreThanTwoFields()
@@ -522,5 +540,41 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
              ->once();
 
         $validator->fails();
+    }
+
+    public function setUpFailCaseTest()
+    {
+        $this->testValidatesExistingCombination();
+
+        $this->data = array(
+            'first_name' => 'Foo',
+            'last_name' => 'Bar',
+        );
+    }
+
+    public function getValidatorExtensionMessages()
+    {
+        $validator = new ValidatorExtension(
+            $this->translator,
+            $this->data,
+            $this->rules,
+            $this->messages
+        );
+
+        $validator->setPresenceVerifier($this->presenceVerifier);
+
+        // One existing Object with this parameter set
+        $this->presenceVerifier
+             ->shouldReceive('getCount')
+             ->once()
+             ->andReturn(1);
+
+        $errors = $validator->messages();
+        $this->assertTrue(is_object($errors), 'Asserting that $validator->messages() returns an object.');
+
+        $errors = $errors->toArray();
+        $this->assertArrayHasKey('first_name', $errors);
+
+        return $errors;
     }
 }
