@@ -146,7 +146,7 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
             $this->translator,
             $this->data,
             $this->rules,
-            ['unique_with' => $test_message]
+            array('unique_with' => $test_message)
         );
 
         $custom_messages = $validator->getCustomMessages();
