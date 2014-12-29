@@ -7,17 +7,17 @@ class ValidatorExtension extends Validator
     /**
      * Creates a new instance of ValidatorExtension
      */
-    public function __construct($translator, $data, $rules, $messages)
+    public function __construct($translator, $data, $rules, $messages, array $customAttributes = array())
     {
-        parent::__construct($translator, $data, $rules, $messages);
-
         // Set custom validation error messages
-        if(!isset($this->messages['unique_with']))
+        if(!isset($messages['unique_with']))
         {
-            $this->messages['unique_with'] = $this->translator->get(
+            $messages['unique_with'] = $translator->get(
                 'uniquewith-validator::validation.unique_with'
             );
         }
+
+        parent::__construct($translator, $data, $rules, $messages, $customAttributes);
     }
 
     /**
@@ -103,6 +103,9 @@ class ValidatorExtension extends Validator
 
     public function replaceUniqueWith($message, $attribute, $rule, $parameters)
     {
+        // remove trailing ID param if present
+        $this->getIgnore($parameters);
+
         // merge primary field with conditional fields
         $fields = array($attribute) + $parameters;
 
