@@ -1,4 +1,4 @@
-# unique_with Validator Rule For Laravel 4
+# unique_with Validator Rule For Laravel 5
 
 [![Build Status](https://travis-ci.org/felixkiss/uniquewith-validator.png?branch=master)](https://travis-ci.org/felixkiss/uniquewith-validator)
 
