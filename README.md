@@ -13,7 +13,7 @@ In your `composer.json` file:
 ```json
 {
     "require": {
-        "laravel/framework": "4.0.*",
+        "laravel/framework": "5.0.*",
         // ...
         "felixkiss/uniquewith-validator": "1.1.*"
     }
