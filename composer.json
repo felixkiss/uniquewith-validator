@@ -1,6 +1,6 @@
 {
     "name": "felixkiss/uniquewith-validator",
-    "description": "Custom Laravel 5 Validator for combined unique indexes",
+    "description": "Custom Laravel Validator for combined unique indexes",
     "keywords": ["laravel"],
     "homepage": "https://github.com/felixkiss/uniquewith-validator",
     "license": "MIT",
@@ -11,6 +11,7 @@
         }
     ],
     "require": {
+        "php": ">=5.4.0",
         "illuminate/support": "5.x",
         "illuminate/validation": "5.x"
     },
