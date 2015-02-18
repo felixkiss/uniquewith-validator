@@ -18,19 +18,23 @@ class UniqueWithValidatorServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //$this->package('felixkiss/uniquewith-validator');
-        $this->loadTranslationsFrom(__DIR__.'/../../lang', 'uniquewith-validator');
+        $this->loadTranslationsFrom(
+            __DIR__ . '/../../lang',
+            'uniquewith-validator'
+        );
 
         // Registering the validator extension with the validator factory
-        $this->app['validator']->resolver(function($translator, $data, $rules, $messages)
-        {
-            return new ValidatorExtension(
-                $translator,
-                $data,
-                $rules,
-                $messages
-            );
-        });
+        $this->app['validator']->resolver(
+            function($translator, $data, $rules, $messages)
+            {
+                return new ValidatorExtension(
+                    $translator,
+                    $data,
+                    $rules,
+                    $messages
+                );
+            }
+        );
     }
 
     /**
