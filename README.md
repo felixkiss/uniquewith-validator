@@ -1,26 +1,30 @@
-# unique_with Validator Rule For Laravel 4
+# unique_with Validator Rule For Laravel
 
 [![Build Status](https://travis-ci.org/felixkiss/uniquewith-validator.png?branch=master)](https://travis-ci.org/felixkiss/uniquewith-validator)
 
-This package contains a variant of the `validateUnique` rule for Laravel 4, that allows for validation of multi-column UNIQUE indexes.
+This package contains a variant of the `validateUnique` rule for Laravel, that allows for validation of multi-column UNIQUE indexes.
 
 ## Installation
 
 Install the package through [Composer](http://getcomposer.org).
 
-In your `composer.json` file:
+### Laravel 4
 
-```json
-{
-    "require": {
-        "laravel/framework": "4.0.*",
-        // ...
-        "felixkiss/uniquewith-validator": "1.1.*"
-    }
-}
+On the command line:
+
+```
+composer require felixkiss/uniquewith-validator:1.*
 ```
 
-Run `composer install` or `composer update` to install the package.
+### Laravel 5
+
+On the command line:
+
+```
+composer require felixkiss/uniquewith-validator:2.*
+```
+
+## Configuration
 
 Add the following to your `providers` array in `config/app.php`:
 
@@ -42,7 +46,7 @@ $rules = array(
 );
 ```
 
-See the [Validation documentation](http://laravel.com/docs/validation) of Laravel 4.
+See the [Validation documentation](http://laravel.com/docs/validation) of Laravel.
 
 ### Specify different column names in the database
 
@@ -55,7 +59,6 @@ $rules = array(
     'first_name' => 'unique_with:users, middle_name, last_name = sur_name',
 );
 ```
-
 
 ## Example
 
