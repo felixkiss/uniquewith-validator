@@ -40,7 +40,13 @@ class ValidatorExtension extends Validator
         // needs to be verified as unique. If this parameter isn't specified
         // we will just assume that this column to be verified shares the
         // attribute's name.
-        $column = $attribute;
+
+        if (strpos($attribute, '.')) {
+            $exploded = explode('.', $attribute);
+            $column = array_pop($exploded);
+        } else {
+            $column = $attribute;
+        }
 
         // Create $extra array with all other columns, so getCount() will
         // include them as where clauses as well
