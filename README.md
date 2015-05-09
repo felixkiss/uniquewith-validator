@@ -1,5 +1,7 @@
 # unique_with Validator Rule For Laravel
 
+[![Join the chat at https://gitter.im/felixkiss/uniquewith-validator](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/felixkiss/uniquewith-validator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/felixkiss/uniquewith-validator.png?branch=master)](https://travis-ci.org/felixkiss/uniquewith-validator)
 
 This package contains a variant of the `validateUnique` rule for Laravel, that allows for validation of multi-column UNIQUE indexes.
