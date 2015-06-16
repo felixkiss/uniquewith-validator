@@ -25,13 +25,14 @@ class UniqueWithValidatorServiceProvider extends ServiceProvider
 
         // Registering the validator extension with the validator factory
         $this->app['validator']->resolver(
-            function($translator, $data, $rules, $messages)
+            function($translator, $data, $rules, $messages, $customAttributes = array())
             {
                 return new ValidatorExtension(
                     $translator,
                     $data,
                     $rules,
-                    $messages
+                    $messages,
+                    $customAttributes
                 );
             }
         );
