@@ -157,6 +157,16 @@ $rules = array(
 );
 ```
 
+You can also set additional clauses. For example, if your model uses soft deleting
+then you can use the following code to select all existing rows but marked as deleted
+
+```php
+$rules = array(
+    'first_name' => 'required|unique_with:users,last_name,deleted_at,2 = custom_id_column',
+    'last_name' => 'required',
+);
+```
+
 ## Extending the Laravel Validator
 
 For simple validation rules that don't need translator or custom messages:
