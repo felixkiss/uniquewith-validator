@@ -30,7 +30,6 @@ composer require felixkiss/uniquewith-validator:2.*
 
 Add the following to your `providers` array in `config/app.php`:
 
-### Laravel 5 (and less)
 
 ```php
 'providers' => array(
