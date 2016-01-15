@@ -36,16 +36,6 @@ Add the following to your `providers` array in `config/app.php`:
 'providers' => array(
     // ...
 
-    'Felixkiss\UniqueWithValidator\UniqueWithValidatorServiceProvider',
-),
-```
-
-### Laravel 5.1 (and more)
-
-```php
-'providers' => array(
-    // ...
-
     Felixkiss\UniqueWithValidator\UniqueWithValidatorServiceProvider::class,
 ),
 ```
