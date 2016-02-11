@@ -15,20 +15,6 @@ class UniqueWithValidatorServiceProvider extends ServiceProvider
             __DIR__ . '/../../lang',
             'uniquewith-validator'
         );
-
-        // Registering the validator extension with the validator factory
-        $this->app['validator']->resolver(
-            function($translator, $data, $rules, $messages, $customAttributes = array())
-            {
-                return new ValidatorExtension(
-                    $translator,
-                    $data,
-                    $rules,
-                    $messages,
-                    $customAttributes
-                );
-            }
-        );
     }
 
     /**
@@ -38,6 +24,18 @@ class UniqueWithValidatorServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
+        // Whenever the validator factory is accessed in the container, we set
+        // the custom resolver on it (this works in Larvel >= 5.2 as well).
+        $this->app->resolving('validator', function ($factory, $app) {
+            $factory->resolver(function ($translator, $data, $rules, $messages, $customAttributes = []) {
+                return new ValidatorExtension(
+                    $translator,
+                    $data,
+                    $rules,
+                    $messages,
+                    $customAttributes
+                );
+            });
+        });
     }
 }
