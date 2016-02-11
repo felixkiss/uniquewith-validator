@@ -5,13 +5,6 @@ use Illuminate\Support\ServiceProvider;
 class UniqueWithValidatorServiceProvider extends ServiceProvider
 {
     /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
-    /**
      * Bootstrap the application events.
      *
      * @return void
@@ -46,15 +39,5 @@ class UniqueWithValidatorServiceProvider extends ServiceProvider
     public function register()
     {
 
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return array();
     }
 }
