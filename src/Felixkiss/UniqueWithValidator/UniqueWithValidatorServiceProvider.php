@@ -9,7 +9,7 @@ class UniqueWithValidatorServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = true;
+    protected $defer = false;
 
     /**
      * Bootstrap the application events.
@@ -55,6 +55,6 @@ class UniqueWithValidatorServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return array('validator');
+        return array();
     }
 }
