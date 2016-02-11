@@ -16,7 +16,8 @@
         "illuminate/validation": "5.x"
     },
     "require-dev": {
-        "mockery/mockery": "dev-master"
+        "phpunit/phpunit": "~5.0",
+        "mockery/mockery": "~0.9"
     },
     "autoload": {
         "psr-0": {
