@@ -34,7 +34,7 @@ class ValidatorExtension extends Validator
         $parameters = array_map('trim', $parameters);
 
         // first item equals table name
-        $table = array_shift($parameters);
+        list($connection, $table) = $this->parseTable(array_shift($parameters));
 
         // The second parameter position holds the name of the column that
         // needs to be verified as unique. If this parameter isn't specified
@@ -90,6 +90,7 @@ class ValidatorExtension extends Validator
         // permanent data store like Redis, etc. We will use it to determine
         // uniqueness.
         $verifier = $this->getPresenceVerifier();
+        $verifier->setConnection($connection);
 
         return $verifier->getCount(
             $table,
