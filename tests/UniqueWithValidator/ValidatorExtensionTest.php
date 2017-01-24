@@ -19,6 +19,8 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
             ->andReturn($this->testDefaultErrorMessage);
         $this->translator->shouldReceive('trans')
             ->andReturnUsing(function($arg) { return $arg; });
+        $this->translator->shouldReceive('get')
+            ->andReturnUsing(function($arg) { return $arg; });
 
         $this->rules = array(
             'first_name' => 'unique_with:users,last_name',
