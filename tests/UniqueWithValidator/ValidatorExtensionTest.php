@@ -25,6 +25,7 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         );
 
         $this->presenceVerifier = Mockery::mock('Illuminate\Validation\PresenceVerifierInterface');
+        $this->presenceVerifier->shouldReceive('setConnection')->zeroOrMoreTimes();
 
         $this->messages = array();
     }
