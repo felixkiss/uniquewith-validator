@@ -1,5 +1,6 @@
 <?php namespace Felixkiss\UniqueWithValidator;
 
+use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
 
 class ValidatorExtension extends Validator
@@ -146,5 +147,20 @@ class ValidatorExtension extends Validator
         array_pop($parameters);
 
         return array($ignoreId, $ignoreColumn);
+    }
+
+    /**
+     * Parse the connection / table for the unique / exists rules.
+     *
+     * @param  string  $table
+     * @return array
+     */
+    protected function parseTable($table)
+    {
+        if (method_exists(get_parent_class($this), 'parseTable')) {
+            return parent::parseTable($table);
+        }
+
+        return Str::contains($table, '.') ? explode('.', $table, 2) : [null, $table];
     }
 }
