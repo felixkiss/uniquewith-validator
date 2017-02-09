@@ -109,9 +109,9 @@ class ValidatorExtension extends Validator
         // merge primary field with conditional fields
         $fields = array($attribute) + $parameters;
 
-        // get full language support due to mapping to validator getAttribute
+        // get full language support due to mapping to validator getDisplayableAttribute
         // function
-        $fields = array_map(array($this, 'getAttribute'), $fields);
+        $fields = array_map(array($this, 'getDisplayableAttribute'), $fields);
 
         // fields to string
         $fields = implode(', ', $fields);
