@@ -9,24 +9,17 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
     protected $rules;
     protected $messages;
     protected $presenceVerifier;
-    protected $testDefaultErrorMessage = 'This is a test error message with :fields.';
+    protected $defaultErrorMessage = 'This is a test error message with :fields.';
 
     public function setUp()
     {
-        $this->translator = Mockery::mock('Symfony\Component\Translation\TranslatorInterface');
-        $this->translator->shouldReceive('get')
-            ->with('uniquewith-validator::validation.unique_with')
-            ->andReturn($this->testDefaultErrorMessage);
-        $this->translator->shouldReceive('trans')
-            ->andReturnUsing(function($arg) { return $arg; });
-
         $this->rules = array(
             'first_name' => 'unique_with:users,last_name',
         );
-
-        $this->presenceVerifier = Mockery::mock('Illuminate\Validation\PresenceVerifierInterface');
-
         $this->messages = array();
+
+        $this->translator = $this->mockTranslator();
+        $this->presenceVerifier = Mockery::mock('Illuminate\Validation\PresenceVerifierInterface');
     }
 
     public function tearDown()
@@ -40,15 +33,9 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
             'first_name' => 'Foo',
             'last_name' => 'Bar',
         );
-        $validator = new ValidatorExtension(
-            $this->translator,
-            $this->data,
-            $this->rules,
-            $this->messages
-        );
-        $validator->setPresenceVerifier($this->presenceVerifier);
+        $validator = $this->createValidator();
 
-        // No existing Object with this parameter set
+        // No existing Object with this parameters set
         $this->presenceVerifier
              ->shouldReceive('getCount')
              ->with(
@@ -71,13 +58,7 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
             'first_name' => 'Foo',
             'last_name' => 'Bar',
         );
-        $validator = new ValidatorExtension(
-            $this->translator,
-            $this->data,
-            $this->rules,
-            $this->messages
-        );
-        $validator->setPresenceVerifier($this->presenceVerifier);
+        $validator = $this->createValidator();
 
         // One existing Object with this parameter set
         $this->presenceVerifier
@@ -98,181 +79,66 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
 
     public function testDefaultErrorMessageWorks()
     {
-        $this->setUpFailCaseTest();
-
-        $validator = new ValidatorExtension(
-            $this->translator,
-            $this->data,
-            $this->rules,
-            $this->messages
+        $this->data = array(
+            'first_name' => 'Foo',
+            'last_name' => 'Bar',
         );
+        $validator = $this->createValidator();
 
-        $custom_messages = $validator->getCustomMessages();
-        $this->assertArrayHasKey('unique_with', $custom_messages);
-        $this->assertEquals($custom_messages['unique_with'], $this->testDefaultErrorMessage);
+        $this->setUpFailWithExistingCombination();
 
-        $validator->setPresenceVerifier($this->presenceVerifier);
-
-        // One existing Object with this parameter set
-        $this->presenceVerifier
-             ->shouldReceive('getCount')
-             ->with(
-                   'users',
-                   'first_name',
-                   'Foo',
-                   null,
-                   null,
-                   array('last_name' => 'Bar')
-               )
-             ->once()
-             ->andReturn(1);
-
-        $errors = $validator->messages();
-        $this->assertTrue(is_object($errors), 'Asserting that $validator->messages() returns an object.');
-        $this->assertInstanceOf('Illuminate\Support\MessageBag', $errors);
-
-        $errors = $errors->toArray();
-        $this->assertArrayHasKey('first_name', $errors);
-        $this->assertNotEmpty($errors['first_name']);
+        $errors = $validator->getMessageBag()->toArray();
+        $this->assertEquals(str_replace(':fields', 'first name, last name', $this->defaultErrorMessage), $errors['first_name'][0]);
     }
 
     public function testErrorMessageOverrideWorks()
     {
-        $test_message = 'This is a test override message with :fields.';
+        $customErrorMessage = 'This is a test override message with :fields.';
 
-        $this->setUpFailCaseTest();
-
-        $validator = new ValidatorExtension(
-            $this->translator,
-            $this->data,
-            $this->rules,
-            array('unique_with' => $test_message)
+        $this->data = array(
+            'first_name' => 'Foo',
+            'last_name' => 'Bar',
         );
+        $this->messages = array('unique_with' => $customErrorMessage);
+        $validator = $this->createValidator();
 
-        $custom_messages = $validator->getCustomMessages();
-        $this->assertArrayHasKey('unique_with', $custom_messages);
-        $this->assertEquals($custom_messages['unique_with'], $test_message);
+        $this->setUpFailWithExistingCombination();
 
-        $validator->setPresenceVerifier($this->presenceVerifier);
-
-        // One existing Object with this parameter set
-        $this->presenceVerifier
-             ->shouldReceive('getCount')
-             ->with(
-                   'users',
-                   'first_name',
-                   'Foo',
-                   null,
-                   null,
-                   array('last_name' => 'Bar')
-               )
-             ->once()
-             ->andReturn(1);
-
-        $errors = $validator->messages();
-        $this->assertTrue(is_object($errors), 'Asserting that $validator->messages() returns an object.');
-        $this->assertInstanceOf('Illuminate\Support\MessageBag', $errors);
-
-        $errors = $errors->toArray();
-        $this->assertArrayHasKey('first_name', $errors);
-        $this->assertTrue(isset($errors['first_name'][0]));
-        $this->assertEquals('This is a test override message with first name, last name.', $errors['first_name'][0]);
+        $errors = $validator->getMessageBag()->toArray();
+        $this->assertEquals(str_replace(':fields', 'first name, last name', $customErrorMessage), $errors['first_name'][0]);
     }
 
     public function testFieldsDoNotIncludeIDFieldInErrorMessage()
     {
-        $this->setUpFailCaseTest();
-
+        $this->data = array(
+            'first_name' => 'Foo',
+            'last_name' => 'Bar',
+        );
         $this->rules['first_name'] .= ',135899999';
+        $validator = $this->createValidator();
 
-        $errors = $this->getValidatorExtensionMessages();
+        $this->setUpFailWithExistingCombination();
 
-        $this->assertTrue(strpos($errors['first_name'][0], '135899999') === false,
-            'Asserting that ID is not found in error message.');
+        $errors = $validator->getMessageBag()->toArray();
+
+        $this->assertNotContains('135899999', $errors['first_name'][0], 'Asserting that ID is not found in error message.');
     }
 
     public function testFieldsDoNotIncludeIDFieldInErrorMessageWithColumnSpecifier()
     {
-        $this->setUpFailCaseTest();
-
+        $this->data = array(
+            'first_name' => 'Foo',
+            'last_name' => 'Bar',
+        );
         $this->rules['first_name'] .= ',135899999=zyxtuvabc';
+        $validator = $this->createValidator();
 
-        $errors = $this->getValidatorExtensionMessages();
+        $this->setUpFailWithExistingCombination();
 
-        $this->assertTrue(strpos($errors['first_name'][0], '135899999') === false,
-            'Asserting that ID is not found in error message.');
-        $this->assertTrue(strpos($errors['first_name'][0], 'zyxtuvabc') === false,
-            'Asserting that ID column is not found in error message.');
-    }
+        $errors = $validator->getMessageBag()->toArray();
 
-    public function testValidatesNewCombinationWithMoreThanTwoFields()
-    {
-        $this->rules = array(
-            'first_name' => 'unique_with:users,middle_name,last_name',
-        );
-        $this->data = array(
-            'first_name' => 'Foo',
-            'middle_name' => 'Bar',
-            'last_name' => 'Baz',
-        );
-        $validator = new ValidatorExtension(
-            $this->translator,
-            $this->data,
-            $this->rules,
-            $this->messages
-        );
-        $validator->setPresenceVerifier($this->presenceVerifier);
-
-        // No existing Object with this parameter set
-        $this->presenceVerifier
-             ->shouldReceive('getCount')
-             ->with(
-                   'users',
-                   'first_name',
-                   'Foo',
-                   null,
-                   null,
-                   array('middle_name' => 'Bar', 'last_name' => 'Baz')
-               )
-             ->once()
-             ->andReturn(0);
-
-        $this->assertFalse($validator->fails());
-    }
-
-    public function testValidatesExistingCombinationWithMoreThanTwoFields()
-    {
-        $this->rules = array(
-            'first_name' => 'unique_with:users,middle_name,last_name',
-        );
-        $this->data = array(
-            'first_name' => 'Foo',
-            'middle_name' => 'Bar',
-            'last_name' => 'Baz',
-        );
-        $validator = new ValidatorExtension(
-            $this->translator,
-            $this->data,
-            $this->rules,
-            $this->messages
-        );
-        $validator->setPresenceVerifier($this->presenceVerifier);
-
-        // One existing Object with this parameter set
-        $this->presenceVerifier
-             ->shouldReceive('getCount')
-             ->with(
-                   'users',
-                   'first_name',
-                   'Foo',
-                   null,
-                   null,
-                   array('middle_name' => 'Bar', 'last_name' => 'Baz')
-               )
-             ->once()
-             ->andReturn(1);
-
-        $this->assertTrue($validator->fails());
+        $this->assertNotContains('135899999', $errors['first_name'][0], 'Asserting that ID is not found in error message.');
+        $this->assertNotContains('zyxtuvabc', $errors['first_name'][0], 'Asserting that ID column is not found in error message.');
     }
 
     public function testReadsParametersWithoutExplicitColumnNames()
@@ -285,13 +151,7 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
             'middle_name' => 'Bar',
             'last_name' => 'Baz',
         );
-        $validator = new ValidatorExtension(
-            $this->translator,
-            $this->data,
-            $this->rules,
-            $this->messages
-        );
-        $validator->setPresenceVerifier($this->presenceVerifier);
+        $validator = $this->createValidator();
 
         $this->presenceVerifier
              ->shouldReceive('getCount')
@@ -318,13 +178,7 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
             'middle_name' => 'Bar',
             'last_name' => 'Baz',
         );
-        $validator = new ValidatorExtension(
-            $this->translator,
-            $this->data,
-            $this->rules,
-            $this->messages
-        );
-        $validator->setPresenceVerifier($this->presenceVerifier);
+        $validator = $this->createValidator();
 
         $this->presenceVerifier
              ->shouldReceive('getCount')
@@ -351,13 +205,7 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
             'middle_name' => 'Bar',
             'last_name' => 'Baz',
         );
-        $validator = new ValidatorExtension(
-            $this->translator,
-            $this->data,
-            $this->rules,
-            $this->messages
-        );
-        $validator->setPresenceVerifier($this->presenceVerifier);
+        $validator = $this->createValidator();
 
         $this->presenceVerifier
              ->shouldReceive('getCount')
@@ -374,7 +222,7 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         $validator->fails();
     }
 
-    public function testValidatesExistingCombinationWithIgnoreID()
+    public function testReadsIgnoreIdWithDefaultColumnName()
     {
         $this->data = array(
             'first_name' => 'Foo',
@@ -383,13 +231,7 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         $this->rules = array(
             'first_name' => 'unique_with:users,last_name,1'
         );
-        $validator = new ValidatorExtension(
-            $this->translator,
-            $this->data,
-            $this->rules,
-            $this->messages
-        );
-        $validator->setPresenceVerifier($this->presenceVerifier);
+        $validator = $this->createValidator();
 
         // One existing Object with this parameter set
         $this->presenceVerifier
@@ -402,115 +244,12 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
                    null,
                    array('last_name' => 'Bar')
                )
-             ->once()
-             ->andReturn(0);
-
-        $this->assertFalse($validator->fails());
-    }
-
-    public function testValidatesNewCombinationWithMoreThanTwoFieldsWithIgnoreID()
-    {
-        $this->rules = array(
-            'first_name' => 'unique_with:users,middle_name,last_name,1'
-        );
-        $this->data = array(
-            'first_name' => 'Foo',
-            'middle_name' => 'Bar',
-            'last_name' => 'Baz',
-        );
-        $validator = new ValidatorExtension(
-            $this->translator,
-            $this->data,
-            $this->rules,
-            $this->messages
-        );
-        $validator->setPresenceVerifier($this->presenceVerifier);
-
-        // No existing Object with this parameter set
-        $this->presenceVerifier
-             ->shouldReceive('getCount')
-             ->with(
-                   'users',
-                   'first_name',
-                   'Foo',
-                   1,
-                   null,
-                   array('middle_name' => 'Bar', 'last_name' => 'Baz')
-               )
-             ->once()
-             ->andReturn(0);
-
-        $this->assertFalse($validator->fails());
-    }
-
-    public function testReadsParametersWithExplicitColumnNamesWithIgnoreID()
-    {
-        $this->rules = array(
-            'first_name' => 'unique_with:users,middle_name = mid_name,last_name=sur_name,1'
-        );
-        $this->data = array(
-            'first_name' => 'Foo',
-            'middle_name' => 'Bar',
-            'last_name' => 'Baz',
-        );
-        $validator = new ValidatorExtension(
-            $this->translator,
-            $this->data,
-            $this->rules,
-            $this->messages
-        );
-        $validator->setPresenceVerifier($this->presenceVerifier);
-
-        $this->presenceVerifier
-             ->shouldReceive('getCount')
-             ->with(
-                   'users',
-                   'first_name',
-                   'Foo',
-                   1,
-                   null,
-                   array('mid_name' => 'Bar', 'sur_name' => 'Baz')
-               )
              ->once();
 
         $validator->fails();
     }
 
-
-    public function testReadsPrimaryParameterWithExplicitColumnNamesWithIgnoreID()
-    {
-        $this->rules = array(
-            'first_name' => 'unique_with:users,first_name = name,middle_name,last_name=sur_name,1'
-        );
-        $this->data = array(
-            'first_name' => 'Foo',
-            'middle_name' => 'Bar',
-            'last_name' => 'Baz',
-        );
-        $validator = new ValidatorExtension(
-            $this->translator,
-            $this->data,
-            $this->rules,
-            $this->messages
-        );
-        $validator->setPresenceVerifier($this->presenceVerifier);
-
-        $this->presenceVerifier
-             ->shouldReceive('getCount')
-             ->with(
-                   'users',
-                   'name',
-                   'Foo',
-                   1,
-                   null,
-                   array('middle_name' => 'Bar', 'sur_name' => 'Baz')
-               )
-             ->once();
-
-        $validator->fails();
-    }
-
-    public function testCustomColumnNameForIgnoreId()
+    public function testReadsIgnoreIdWithCustomColumnName()
     {
         $this->rules = array(
             'first_name' => 'unique_with:users,first_name,last_name,1 = UserKey',
@@ -519,13 +258,7 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
             'first_name' => 'Foo',
             'last_name'  => 'Bar',
         );
-        $validator = new ValidatorExtension(
-            $this->translator,
-            $this->data,
-            $this->rules,
-            $this->messages
-        );
-        $validator->setPresenceVerifier($this->presenceVerifier);
+        $validator = $this->createValidator();
 
         $this->presenceVerifier
              ->shouldReceive('getCount')
@@ -542,17 +275,7 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
         $validator->fails();
     }
 
-    public function setUpFailCaseTest()
-    {
-        $this->testValidatesExistingCombination();
-
-        $this->data = array(
-            'first_name' => 'Foo',
-            'last_name' => 'Bar',
-        );
-    }
-
-    public function getValidatorExtensionMessages()
+    protected function createValidator()
     {
         $validator = new ValidatorExtension(
             $this->translator,
@@ -563,18 +286,33 @@ class ValidatorExtensionTest extends PHPUnit_Framework_TestCase
 
         $validator->setPresenceVerifier($this->presenceVerifier);
 
+        return $validator;
+    }
+
+    protected function setUpFailWithExistingCombination()
+    {
         // One existing Object with this parameter set
         $this->presenceVerifier
              ->shouldReceive('getCount')
              ->once()
              ->andReturn(1);
+    }
 
-        $errors = $validator->messages();
-        $this->assertTrue(is_object($errors), 'Asserting that $validator->messages() returns an object.');
+    protected function mockTranslator()
+    {
+        try {
+            $classInfo = new ReflectionClass('Illuminate\Contracts\Translation\Translator');
+            $translator = Mockery::mock('Illuminate\Contracts\Translation\Translator');
+        }
+        catch(ReflectionException $e) {
+            $translator = Mockery::mock('Symfony\Component\Translation\TranslatorInterface');
+        }
 
-        $errors = $errors->toArray();
-        $this->assertArrayHasKey('first_name', $errors);
+        $translator->shouldReceive('get')
+            ->with('uniquewith-validator::validation.unique_with')
+            ->andReturn($this->defaultErrorMessage);
+        $translator->shouldReceive('trans')->andReturnUsing(function($arg) { return $arg; });
 
-        return $errors;
+        return $translator;
     }
 }
