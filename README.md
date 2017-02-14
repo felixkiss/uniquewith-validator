@@ -30,11 +30,12 @@ composer require felixkiss/uniquewith-validator:2.*
 
 Add the following to your `providers` array in `config/app.php`:
 
+
 ```php
 'providers' => array(
     // ...
 
-    'Felixkiss\UniqueWithValidator\UniqueWithValidatorServiceProvider',
+    Felixkiss\UniqueWithValidator\UniqueWithValidatorServiceProvider::class,
 ),
 ```
 
