@@ -1,4 +1,4 @@
 <?php
 return array(
-    'unique_with' => 'هذا ال:fields قد تم اختياره مسبقا ',
+    'unique_with' => 'هذا ال:attribute قد تم اختياره مسبقا ',
 );
