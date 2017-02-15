@@ -209,8 +209,7 @@ class ValidatorSpec extends ObjectBehavior
         );
 
         $expectedErrorMessage = str_replace(':fields', 'first name, last name', $this->getValidationMessage());
-        $actualErrorMessage = $this->validator->getMessageBag()->toArray()['first_name'][0];
-        $actualErrorMessage->shouldBe($expectedErrorMessage);
+        expect($this->validator->getMessageBag()->toArray())->toBe(['first_name' => [$expectedErrorMessage]]);
     }
 
     function it_uses_custom_error_message_coming_from_translator()
@@ -232,8 +231,7 @@ class ValidatorSpec extends ObjectBehavior
         );
 
         $expectedErrorMessage = str_replace(':fields', 'first name, middle name, last name', $customErrorMessage);
-        $actualErrorMessage = $this->validator->getMessageBag()->toArray()['first_name'][0];
-        $actualErrorMessage->shouldBe($expectedErrorMessage);
+        expect($this->validator->getMessageBag()->toArray())->toBe(['first_name' => [$expectedErrorMessage]]);
     }
 
     function it_uses_custom_attribute_names_coming_from_translator()
@@ -253,8 +251,7 @@ class ValidatorSpec extends ObjectBehavior
         );
 
         $expectedErrorMessage = str_replace(':fields', 'Vorname, Nachname', $this->getValidationMessage());
-        $actualErrorMessage = $this->validator->getMessageBag()->toArray()['first_name'][0];
-        $actualErrorMessage->shouldBe($expectedErrorMessage);
+        expect($this->validator->getMessageBag()->toArray())->toBe(['first_name' => [$expectedErrorMessage]]);
     }
 
     protected function validateData(array $rules = [], array $data = [])
@@ -268,7 +265,7 @@ class ValidatorSpec extends ObjectBehavior
         }, $message);
         $factory->replacer('unique_with', function() {
             $translator = $this->translator->getWrappedObject();
-            return call_user_func_array([$this, 'replaceUniqueWith'], array_merge(func_get_args(), [$translator]));
+            return call_user_func_array([$this, 'replaceUniqueWith'], array_merge(func_get_args(), [$translator]))->getWrappedObject();
         });
         $factory->setPresenceVerifier($this->presenceVerifier->getWrappedObject());
 
@@ -291,22 +288,4 @@ class ValidatorSpec extends ObjectBehavior
     {
         return $this->validationMessage;
     }
-
-    // protected function mockTranslator()
-    // {
-    //     try {
-    //         $classInfo = new ReflectionClass('Illuminate\Contracts\Translation\Translator');
-    //         $translator = Mockery::mock('Illuminate\Contracts\Translation\Translator');
-    //     }
-    //     catch(ReflectionException $e) {
-    //         $translator = Mockery::mock('Symfony\Component\Translation\TranslatorInterface');
-    //     }
-    //
-    //     $translator->shouldReceive('get')
-    //         ->with('uniquewith-validator::validation.unique_with')
-    //         ->andReturn($this->defaultErrorMessage);
-    //     $translator->shouldReceive('trans')->andReturnUsing(function($arg) { return $arg; });
-    //
-    //     return $translator;
-    // }
 }
