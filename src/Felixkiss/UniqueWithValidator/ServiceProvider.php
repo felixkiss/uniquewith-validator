@@ -16,12 +16,11 @@ class ServiceProvider extends BaseServiceProvider
             'uniquewith-validator'
         );
 
-        $message = $this->app->translator->get('uniquewith-validator::validation.unique_with');
+        $message = $this->app->translator->trans('uniquewith-validator::validation.unique_with');
         $this->app->validator->extend('unique_with', Validator::class . '@validateUniqueWith', $message);
         $this->app->validator->replacer('unique_with', function() {
             $translator = $this->app->translator;
-            $validator = $this->app->make(Validator::class);
-            return call_user_func_array([$validator, 'replaceUniqueWith'], array_merge(func_get_args(), [$translator]));
+            return call_user_func_array([new Validator, 'replaceUniqueWith'], array_merge(func_get_args(), [$translator]));
         });
     }
 
