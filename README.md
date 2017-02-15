@@ -4,24 +4,17 @@
 
 This package contains a variant of the `validateUnique` rule for Laravel, that allows for validation of multi-column UNIQUE indexes.
 
+## Documentation for older versions
+
+ - [Laravel 4](https://github.com/felixkiss/uniquewith-validator/blob/2.0.8/README.md#laravel-4)
+
 ## Installation
 
 Install the package through [Composer](http://getcomposer.org).
-
-### Laravel 4
-
 On the command line:
 
 ```
-composer require felixkiss/uniquewith-validator:1.*
-```
-
-### Laravel 5
-
-On the command line:
-
-```
-composer require felixkiss/uniquewith-validator:2.*
+composer require felixkiss/uniquewith-validator
 ```
 
 ## Configuration
@@ -29,11 +22,11 @@ composer require felixkiss/uniquewith-validator:2.*
 Add the following to your `providers` array in `config/app.php`:
 
 ```php
-'providers' => array(
+'providers' => [
     // ...
 
-    'Felixkiss\UniqueWithValidator\UniqueWithValidatorServiceProvider',
-),
+    Felixkiss\UniqueWithValidator\ServiceProvider::class,
+],
 ```
 
 ## Usage
@@ -41,9 +34,9 @@ Add the following to your `providers` array in `config/app.php`:
 Use it like any `Validator` rule:
 
 ```php
-$rules = array(
+$rules = [
     '<field1>' => 'unique_with:<table>,<field2>[,<field3>,...,<ignore_rowid>]',
-);
+];
 ```
 
 See the [Validation documentation](http://laravel.com/docs/validation) of Laravel.
@@ -55,9 +48,9 @@ you can specify the column names explicitly.
 
 e.g. your input contains a field 'last_name', but the column in your database is called 'sur_name':
 ```php
-$rules = array(
+$rules = [
     'first_name' => 'unique_with:users, middle_name, last_name = sur_name',
-);
+];
 ```
 
 ## Example
@@ -87,7 +80,7 @@ class CreateUsersTable extends Migration {
             $table->string('first_name');
             $table->string('last_name');
 
-            $table->unique(array('first_name', 'last_name'));
+            $table->unique(['first_name', 'last_name']);
         });
     }
 
@@ -114,15 +107,14 @@ Now you can validate a given `first_name`, `last_name` combination with somethin
 
 ```php
 Route::post('test', function() {
-    $rules = array(
+    $rules = [
         'first_name' => 'required|unique_with:users,last_name',
         'last_name' => 'required',
-    );
+    ];
 
     $validator = Validator::make(Input::all(), $rules);
 
-    if($validator->fails())
-    {
+    if($validator->fails()) {
         return Redirect::back()->withErrors($validator);
     }
 
@@ -140,56 +132,38 @@ You can also specify a row id to ignore (useful to solve unique constraint when 
 This will ignore row with id 2
 
 ```php
-$rules = array(
+$rules = [
     'first_name' => 'required|unique_with:users,last_name,2',
     'last_name' => 'required',
-);
+];
 ```
 
 To specify a custom column name for the id, pass it like
 
 ```php
-$rules = array(
+$rules = [
     'first_name' => 'required|unique_with:users,last_name,2 = custom_id_column',
     'last_name' => 'required',
-);
+];
+```
+
+If your id is not numeric, you can tell the validator
+
+```php
+$rules = [
+    'first_name' => 'required|unique_with:users,last_name,ignore:abc123',
+    'last_name' => 'required',
+];
 ```
 
 You can also set additional clauses. For example, if your model uses soft deleting
 then you can use the following code to select all existing rows but marked as deleted
 
 ```php
-$rules = array(
+$rules = [
     'first_name' => 'required|unique_with:users,last_name,deleted_at,2 = custom_id_column',
     'last_name' => 'required',
-);
-```
-
-## Extending the Laravel Validator
-
-For simple validation rules that don't need translator or custom messages:
-```php
-Validator::extend('foo_bar', function($attribute, $value, $parameters)
-{
-    return ($attribute == 'foo' && $value == 'bar');
-});
-```
-
-For more sophisticated rules:
-```php
-class CustomValidator extends Felixkiss\UniqueWithValidator\ValidatorExtension
-{
-    public function validateOnlyApple($attribute, $value, $parameters)
-    {
-        // $this->translator, $this->messages, etc. available
-        return ($attribute == 'company' && $value == 'apple');
-    }
-}
-
-Validator::resolver(function($translator, $data, $rules, $messages)
-{
-    return new CustomValidator($translator, $data, $rules, $messages);
-});
+];
 ```
 
 # License
