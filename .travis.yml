@@ -17,7 +17,7 @@ before_script:
   - composer self-update
   - composer install --prefer-source --no-interaction --dev
 
-script: vendor/bin/phpunit
+script: vendor/bin/phpspec run --format=pretty
 
 notifications:
   slack:

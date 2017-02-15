@@ -22,8 +22,6 @@
         "illuminate/validation": "5.x"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.0",
-        "mockery/mockery": "~0.9",
         "phpspec/phpspec": "^3.2",
         "bossa/phpspec2-expect": "dev-phpspec-3.2"
     },
