@@ -12,6 +12,7 @@ class RuleParser
     protected $ignoreValue;
     protected $dataFields;
 
+    protected $attribute;
     protected $parameters;
     protected $data;
 
@@ -19,7 +20,7 @@ class RuleParser
 
     public function __construct($attribute = null, $value = null, array $parameters = [], array $data = [])
     {
-        $this->primaryField = $attribute;
+        $this->primaryField = $this->attribute = $attribute;
         $this->primaryValue = $value;
         $this->parameters = $parameters;
         $this->data = $data;
@@ -59,7 +60,7 @@ class RuleParser
         //     => field_name = 'last_name', column_name = 'sur_name'
         foreach ($this->parameters as $parameter) {
             $parts = array_map('trim', explode('=', $parameter, 2));
-            $fieldName = $parts[0];
+            $fieldName = $this->parseFieldName($parts[0]);
             $columnName = count($parts) > 1 ? $parts[1] : $fieldName;
             $this->dataFields[] = $fieldName;
 
@@ -146,5 +147,45 @@ class RuleParser
         // number greater than 1 (a valid id in the database)
         $parts = array_map('trim', explode('=', $parameter));
         return preg_match('/^[1-9][0-9]*$/', $parts[0]);
+    }
+
+    protected function parseFieldName($field)
+    {
+        if (preg_match('/^\*\.|\.\*\./', $field)) {
+            // This rule validates multiple times, because a wildcard * was used
+            // in order to validate all elements of an array. We now need to
+            // figure out which element we are on, so we can replace the
+            // wildcard with the current index in the array to access the actual
+            // data correctly.
+
+            // 1. Convert main attribute (Laravel has already replaced the
+            //    wildcards with the current indizes here) to have wildcards
+            //    instead
+            $attributeWithWildcards = preg_replace(
+                ['/^[0-9]+\./', '/\.[0-9]+\./'],
+                ['*.', '.*.'],
+                $this->attribute
+            );
+
+            // 2. Figure out what parts of the current field string should be
+            //    replaced (Basically everything before the last wildcard)
+            $positionOfLastWildcard = strrpos($attributeWithWildcards, '*.');
+            $wildcardPartToBeReplaced = substr($attributeWithWildcards, 0, $positionOfLastWildcard + 2);
+
+            // 3. Figure out what the substitute for the replacement in the
+            //    current field string should be (Basically delete everything
+            //    after the final index part in the main attribute)
+            $endPartToDismiss = substr($attributeWithWildcards, $positionOfLastWildcard + 2);
+            $actualIndexPartToBeSubstitute = str_replace($endPartToDismiss, '', $this->attribute);
+
+            // 4. Do the actual replacement. The end result should be a string
+            //    of the current field we work on, but with the wildcards
+            //    replaced by the correct indizes for the current validation run
+            $fieldWithActualIndizes = str_replace($wildcardPartToBeReplaced, $actualIndexPartToBeSubstitute, $field);
+
+            return $fieldWithActualIndizes;
+        }
+
+        return $field;
     }
 }

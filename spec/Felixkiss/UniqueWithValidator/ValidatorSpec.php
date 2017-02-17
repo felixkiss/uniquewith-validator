@@ -276,6 +276,43 @@ class ValidatorSpec extends ObjectBehavior
         )->shouldHaveBeenCalled();
     }
 
+    function it_supports_dot_notation_for_an_array_in_rules()
+    {
+        $this->validateData(
+            ['users.*.first' => 'unique_with:users, users.*.first = first_name, users.*.last = last_name'],
+            [
+                'users' => [
+                    [
+                        'first' => 'Foo',
+                        'last' => 'Bar',
+                    ],
+                    [
+                        'first' => 'Baz',
+                        'last' => 'Quux',
+                    ],
+                ],
+            ]
+        );
+
+        $this->presenceVerifier->getCount(
+            'users',
+            'first_name',
+            'Foo',
+            null,
+            null,
+            ['last_name' => 'Bar']
+        )->shouldHaveBeenCalled();
+
+        $this->presenceVerifier->getCount(
+            'users',
+            'first_name',
+            'Baz',
+            null,
+            null,
+            ['last_name' => 'Quux']
+        )->shouldHaveBeenCalled();
+    }
+
     protected function validateData(array $rules = [], array $data = [])
     {
         $result = null;
