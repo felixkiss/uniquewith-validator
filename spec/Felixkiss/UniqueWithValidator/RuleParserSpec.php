@@ -87,6 +87,18 @@ class RuleParserSpec extends ObjectBehavior
         $this->getIgnoreColumn()->shouldReturn('user_id');
     }
 
+    function it_can_parse_dot_notation_for_object_correctly()
+    {
+        $this->beConstructedWith('name.first', 'Foo', ['users', 'name.first = first_name', 'name.last = last_name'], [
+            'name' => [
+                'first' => 'Foo',
+                'last' => 'Bar',
+            ],
+        ]);
+        $this->getPrimaryField()->shouldReturn('first_name');
+        $this->getAdditionalFields()->shouldReturn(['last_name' => 'Bar']);
+    }
+
     function it_returns_data_fields_correctly()
     {
         $this->beConstructedWith('first_name', 'Foo', ['users', 'first_name = firstName', 'middle_name', 'last_name => lastName', 'ignore:abc123 = user_id'], []);

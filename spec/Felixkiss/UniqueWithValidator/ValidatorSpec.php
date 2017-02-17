@@ -254,6 +254,28 @@ class ValidatorSpec extends ObjectBehavior
         expect($this->validator->getMessageBag()->toArray())->toBe(['first_name' => [$expectedErrorMessage]]);
     }
 
+    function it_supports_dot_notation_for_an_object_in_rules()
+    {
+        $this->validateData(
+            ['name.first' => 'unique_with:users, name.first = first_name, name.last = last_name'],
+            [
+                'name' => [
+                    'first' => 'Foo',
+                    'last' => 'Bar',
+                ],
+            ]
+        );
+
+        $this->presenceVerifier->getCount(
+            'users',
+            'first_name',
+            'Foo',
+            null,
+            null,
+            ['last_name' => 'Bar']
+        )->shouldHaveBeenCalled();
+    }
+
     protected function validateData(array $rules = [], array $data = [])
     {
         $result = null;

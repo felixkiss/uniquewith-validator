@@ -1,5 +1,7 @@
 <?php namespace Felixkiss\UniqueWithValidator;
 
+use Illuminate\Support\Arr;
+
 class RuleParser
 {
     protected $table;
@@ -66,11 +68,11 @@ class RuleParser
                 continue;
             }
 
-            if (!array_key_exists($fieldName, $this->data)) {
+            if (!Arr::has($this->data, $fieldName)) {
                 continue;
             }
 
-            $this->additionalFields[$columnName] = $this->data[$fieldName];
+            $this->additionalFields[$columnName] = Arr::get($this->data, $fieldName);
         }
 
         $this->dataFields = array_values(array_unique($this->dataFields));
