@@ -1,5 +1,5 @@
 <?php
 
-return array(
+return[
     'unique_with' => ':fields alan kombinasyonları daha önceden kaydedilmiş.',
-);
+];
