@@ -254,6 +254,65 @@ class ValidatorSpec extends ObjectBehavior
         expect($this->validator->getMessageBag()->toArray())->toBe(['first_name' => [$expectedErrorMessage]]);
     }
 
+    function it_supports_dot_notation_for_an_object_in_rules()
+    {
+        $this->validateData(
+            ['name.first' => 'unique_with:users, name.first = first_name, name.last = last_name'],
+            [
+                'name' => [
+                    'first' => 'Foo',
+                    'last' => 'Bar',
+                ],
+            ]
+        );
+
+        $this->presenceVerifier->getCount(
+            'users',
+            'first_name',
+            'Foo',
+            null,
+            null,
+            ['last_name' => 'Bar']
+        )->shouldHaveBeenCalled();
+    }
+
+    function it_supports_dot_notation_for_an_array_in_rules()
+    {
+        $this->validateData(
+            ['users.*.first' => 'unique_with:users, users.*.first = first_name, users.*.last = last_name'],
+            [
+                'users' => [
+                    [
+                        'first' => 'Foo',
+                        'last' => 'Bar',
+                    ],
+                    [
+                        'first' => 'Baz',
+                        'last' => 'Quux',
+                    ],
+                ],
+            ]
+        );
+
+        $this->presenceVerifier->getCount(
+            'users',
+            'first_name',
+            'Foo',
+            null,
+            null,
+            ['last_name' => 'Bar']
+        )->shouldHaveBeenCalled();
+
+        $this->presenceVerifier->getCount(
+            'users',
+            'first_name',
+            'Baz',
+            null,
+            null,
+            ['last_name' => 'Quux']
+        )->shouldHaveBeenCalled();
+    }
+
     protected function validateData(array $rules = [], array $data = [])
     {
         $result = null;

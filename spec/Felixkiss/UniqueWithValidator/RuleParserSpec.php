@@ -87,6 +87,70 @@ class RuleParserSpec extends ObjectBehavior
         $this->getIgnoreColumn()->shouldReturn('user_id');
     }
 
+    function it_can_parse_dot_notation_for_object_correctly()
+    {
+        $this->beConstructedWith('name.first', 'Foo', ['users', 'name.first = first_name', 'name.last = last_name'], [
+            'name' => [
+                'first' => 'Foo',
+                'last' => 'Bar',
+            ],
+        ]);
+        $this->getPrimaryField()->shouldReturn('first_name');
+        $this->getAdditionalFields()->shouldReturn(['last_name' => 'Bar']);
+    }
+
+    function it_can_parse_dot_notation_for_first_entry_of_array_correctly()
+    {
+        $this->beConstructedWith('users.0.first', 'Foo', ['users', 'users.*.first = first_name', 'users.*.last = last_name'], [
+            'users' => [
+                [
+                    'first' => 'Foo',
+                    'last' => 'Bar',
+                ],
+                [
+                    'first' => 'Baz',
+                    'last' => 'Quux',
+                ],
+            ],
+        ]);
+        $this->getPrimaryField()->shouldReturn('first_name');
+        $this->getAdditionalFields()->shouldReturn(['last_name' => 'Bar']);
+    }
+
+    function it_can_parse_dot_notation_for_second_entry_of_array_correctly()
+    {
+        $this->beConstructedWith('users.1.first', 'Baz', ['users', 'users.*.first = first_name', 'users.*.last = last_name'], [
+            'users' => [
+                [
+                    'first' => 'Foo',
+                    'last' => 'Bar',
+                ],
+                [
+                    'first' => 'Baz',
+                    'last' => 'Quux',
+                ],
+            ],
+        ]);
+        $this->getPrimaryField()->shouldReturn('first_name');
+        $this->getAdditionalFields()->shouldReturn(['last_name' => 'Quux']);
+    }
+
+    function it_can_parse_dot_notation_for_top_level_array_correctly()
+    {
+        $this->beConstructedWith('1.first_name', 'Baz', ['users', '*.first_name = first_name', '*.last_name = last_name'], [
+            [
+                'first_name' => 'Foo',
+                'last_name' => 'Bar',
+            ],
+            [
+                'first_name' => 'Baz',
+                'last_name' => 'Quux',
+            ],
+        ]);
+        $this->getPrimaryField()->shouldReturn('first_name');
+        $this->getAdditionalFields()->shouldReturn(['last_name' => 'Quux']);
+    }
+
     function it_returns_data_fields_correctly()
     {
         $this->beConstructedWith('first_name', 'Foo', ['users', 'first_name = firstName', 'middle_name', 'last_name => lastName', 'ignore:abc123 = user_id'], []);
