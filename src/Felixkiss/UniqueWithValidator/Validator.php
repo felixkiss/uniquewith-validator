@@ -25,7 +25,7 @@ class Validator
         ) == 0;
     }
 
-    public function replaceUniqueWith($message, $attribute, $rule, $parameters, $translator)
+    public function replaceUniqueWith($message, $attribute, $rule, $parameters, $validator, $translator)
     {
         $ruleParser = new RuleParser($attribute, null, $parameters);
         $fields = $ruleParser->getDataFields();
