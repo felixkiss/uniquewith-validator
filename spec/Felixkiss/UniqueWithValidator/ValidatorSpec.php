@@ -323,8 +323,15 @@ class ValidatorSpec extends ObjectBehavior
             $result = call_user_func_array([$this, 'validateUniqueWith'], func_get_args());
         }, $message);
         $factory->replacer('unique_with', function() {
-            $translator = $this->translator->getWrappedObject();
-            return call_user_func_array([$this, 'replaceUniqueWith'], array_merge(func_get_args(), [$translator]))->getWrappedObject();
+            $arguments = func_get_args();
+            if (sizeof($arguments) >= 5) {
+                $arguments[4] = $arguments[4]->getTranslator();
+            }
+            else {
+                $arguments[4] = $this->translator->getWrappedObject();
+            }
+
+            return call_user_func_array([$this, 'replaceUniqueWith'], $arguments)->getWrappedObject();
         });
         $factory->setPresenceVerifier($this->presenceVerifier->getWrappedObject());
 
