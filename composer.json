@@ -30,5 +30,12 @@
             "Felixkiss\\UniqueWithValidator\\": "src/"
         }
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Felixkiss\\UniqueWithValidator\\ServiceProvider"
+            ]
+        }
+    },
     "minimum-stability": "stable"
 }
