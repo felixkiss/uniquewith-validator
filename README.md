@@ -167,6 +167,17 @@ $rules = [
 ];
 ```
 
+In Laravel 5 (tested on 5.5), if validation is performed in form request class, field deleted_at is skipped, because it's not send in request. To solve this problem, add 'deleted_at' => null to Your validation parameters, e.g.:
+
+```php
+    protected function validationData()
+    {
+        return array_merge($this->request->all(), [
+            'deleted_at' => null
+        ]);
+    }
+```
+
 # License
 
 MIT
