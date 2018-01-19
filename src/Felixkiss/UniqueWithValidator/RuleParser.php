@@ -75,6 +75,21 @@ class RuleParser
 
             $this->additionalFields[$columnName] = Arr::get($this->data, $fieldName);
         }
+        
+        // if !deleted parameter exists, then ignore deleted (with softDeletes) items
+        if (in_array('!deleted', $this->parameters))
+        {
+            // if no deleted_at specified, than set it to NULL, so that validation could
+            // search duplicates only within rows with deleted_at = NULL
+            if (!array_key_exists('deleted_at', $this->data))
+            {
+                $this->additionalFields['deleted_at'] = NULL;
+            }
+
+            // replace !deleted with deleted_at
+            $this->parameters[array_search('!deleted', $this->parameters)] = 'deleted_at';
+            $this->dataFields[array_search('!deleted', $this->dataFields)] = 'deleted_at';
+        }
 
         $this->dataFields = array_values(array_unique($this->dataFields));
     }
