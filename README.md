@@ -96,6 +96,19 @@ $rules = [
 ];
 ```
 
+*Soft delete caveat:*
+
+In Laravel 5 (tested on 5.5), if the validation is performed in form request class, field deleted_at is skipped, because it's not send in request. To solve this problem, add 'deleted_at' => null to Your validation parameters in request class., e.g.:
+
+```php
+protected function validationData()
+{
+    return array_merge($this->request->all(), [
+        'deleted_at' => null
+    ]);
+}
+```
+
 ### Specify specific database connection to use
 
 If we have a connection named `some-database`, we can enforce this connection (rather than the default) like this:
