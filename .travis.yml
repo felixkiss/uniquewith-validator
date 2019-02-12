@@ -3,10 +3,15 @@ php:
   - 5.6
   - 7.0
   - 7.1
+  - 7.2
+  - 7.3
 env:
   - LARAVEL_VERSION=5.2
   - LARAVEL_VERSION=5.3
   - LARAVEL_VERSION=5.4
+  - LARAVEL_VERSION=5.5
+  - LARAVEL_VERSION=5.6
+  - LARAVEL_VERSION=5.7
 
 cache:
   directories:
