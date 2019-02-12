@@ -156,4 +156,17 @@ class RuleParserSpec extends ObjectBehavior
         $this->beConstructedWith('first_name', 'Foo', ['users', 'first_name = firstName', 'middle_name', 'last_name => lastName', 'ignore:abc123 = user_id'], []);
         $this->getDataFields()->shouldReturn(['first_name', 'middle_name', 'last_name']);
     }
+
+    function it_returns_null_for_connection_if_not_specified()
+    {
+        $this->beConstructedWith('first_name', 'Foo', ['users', 'last_name'], []);
+        $this->getConnection()->shouldReturn(null);
+    }
+
+    function it_can_parse_custom_connection_if_specified()
+    {
+        $this->beConstructedWith('first_name', 'Foo', ['other-connection.users', 'last_name'], []);
+        $this->getConnection()->shouldReturn('other-connection');
+        $this->getTable()->shouldReturn('users');
+    }
 }

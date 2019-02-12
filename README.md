@@ -54,6 +54,16 @@ $rules = [
 ];
 ```
 
+### Specify specific database connection to use
+
+If we have a connection named `some-database`, we can enforce this connection (rather than the default) like this:
+
+```php
+$rules = [
+    'first_name' => 'unique_with:some-database.users, middle_name, last_name',
+];
+```
+
 ## Example
 
 Pretend you have a `users` table in your database plus `User` model like this:
