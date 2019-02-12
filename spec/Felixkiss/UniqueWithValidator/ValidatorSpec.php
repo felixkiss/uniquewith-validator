@@ -3,6 +3,7 @@
 use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Validation\Factory;
 use Illuminate\Validation\PresenceVerifierInterface;
+use Illuminate\Validation\DatabasePresenceVerifier;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -310,6 +311,30 @@ class ValidatorSpec extends ObjectBehavior
             null,
             null,
             ['last_name' => 'Quux']
+        )->shouldHaveBeenCalled();
+    }
+
+    function it_uses_connection_if_specified(DatabasePresenceVerifier $dbVerifier)
+    {
+        $this->presenceVerifier = $dbVerifier;
+
+        $this->validateData(
+            ['first_name' => 'unique_with:db.users,middle_name,last_name'],
+            [
+                'first_name' => 'Foo',
+                'middle_name' => 'Bar',
+                'last_name' => 'Baz',
+            ]
+        );
+
+        $this->presenceVerifier->setConnection('db')->shouldHaveBeenCalled();
+        $this->presenceVerifier->getCount(
+            'users',
+            'first_name',
+            'Foo',
+            null,
+            null,
+            ['middle_name' => 'Bar', 'last_name' => 'Baz']
         )->shouldHaveBeenCalled();
     }
 

@@ -1,9 +1,11 @@
 <?php namespace Felixkiss\UniqueWithValidator;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class RuleParser
 {
+    protected $connection;
     protected $table;
     protected $primaryField;
     protected $primaryValue;
@@ -36,6 +38,9 @@ class RuleParser
 
         // first item equals table name
         $this->table = array_shift($this->parameters);
+        if (Str::contains($this->table, '.')) {
+            list($this->connection, $this->table) = explode('.', $this->table, 2);
+        }
 
         // Check if ignore data is set
         $this->parseIgnore();
@@ -77,6 +82,12 @@ class RuleParser
         }
 
         $this->dataFields = array_values(array_unique($this->dataFields));
+    }
+
+    public function getConnection()
+    {
+        $this->parse();
+        return $this->connection;
     }
 
     public function getTable()
