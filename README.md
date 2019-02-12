@@ -54,6 +54,49 @@ $rules = [
 ];
 ```
 
+### Ignore existing row (useful when updating)
+
+You can also specify a row id to ignore (useful to solve unique constraint when updating)
+
+This will ignore row with id 2
+
+```php
+$rules = [
+    'first_name' => 'required|unique_with:users,last_name,2',
+    'last_name' => 'required',
+];
+```
+
+To specify a custom column name for the id, pass it like
+
+```php
+$rules = [
+    'first_name' => 'required|unique_with:users,last_name,2 = custom_id_column',
+    'last_name' => 'required',
+];
+```
+
+If your id is not numeric, you can tell the validator
+
+```php
+$rules = [
+    'first_name' => 'required|unique_with:users,last_name,ignore:abc123',
+    'last_name' => 'required',
+];
+```
+
+### Add additional clauses (e.g. when using soft deletes)
+
+You can also set additional clauses. For example, if your model uses soft deleting
+then you can use the following code to select all existing rows but marked as deleted
+
+```php
+$rules = [
+    'first_name' => 'required|unique_with:users,last_name,deleted_at,2 = custom_id_column',
+    'last_name' => 'required',
+];
+```
+
 ## Example
 
 Pretend you have a `users` table in your database plus `User` model like this:
@@ -126,45 +169,6 @@ Route::post('test', function() {
 
     return Redirect::home()->with('success', 'User created!');
 });
-```
-
-You can also specify a row id to ignore (useful to solve unique constraint when updating)
-
-This will ignore row with id 2
-
-```php
-$rules = [
-    'first_name' => 'required|unique_with:users,last_name,2',
-    'last_name' => 'required',
-];
-```
-
-To specify a custom column name for the id, pass it like
-
-```php
-$rules = [
-    'first_name' => 'required|unique_with:users,last_name,2 = custom_id_column',
-    'last_name' => 'required',
-];
-```
-
-If your id is not numeric, you can tell the validator
-
-```php
-$rules = [
-    'first_name' => 'required|unique_with:users,last_name,ignore:abc123',
-    'last_name' => 'required',
-];
-```
-
-You can also set additional clauses. For example, if your model uses soft deleting
-then you can use the following code to select all existing rows but marked as deleted
-
-```php
-$rules = [
-    'first_name' => 'required|unique_with:users,last_name,deleted_at,2 = custom_id_column',
-    'last_name' => 'required',
-];
 ```
 
 # License
