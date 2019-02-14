@@ -16,8 +16,8 @@
         "illuminate/validation": "5.*"
     },
     "require-dev": {
-        "phpspec/phpspec": "^3.4",
-        "bossa/phpspec2-expect": "^2.3"
+        "phpspec/phpspec": "^5.1",
+        "bossa/phpspec2-expect": "^3.1"
     },
     "autoload": {
         "psr-0": {
