@@ -392,7 +392,7 @@ class ValidatorSpec extends ObjectBehavior
      */
     protected function trans(...$args)
     {
-        if (method_exists($this->translator, 'trans')) {
+        if (method_exists($this->translator->getWrappedObject(), 'trans')) {
             return $this->translator->trans(...$args);
         } else {
             return $this->translator->get(...$args);
