@@ -32,7 +32,7 @@ install:
   - travis_retry composer install --no-suggest --no-interaction --prefer-dist --no-progress
 
 script:
-  - vendor/bin/phpspec run --format=pretty
+  - vendor/bin/phpspec run --format=pretty --no-interaction
 
 notifications:
   slack:
