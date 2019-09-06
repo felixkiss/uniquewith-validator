@@ -33,7 +33,11 @@ class Validator
         $ruleParser = new RuleParser($attribute, null, $parameters);
         $fields = $ruleParser->getDataFields();
 
-        $customAttributes = $translator->trans('validation.attributes');
+        if (method_exists($translator, 'trans')) {
+            $customAttributes = $translator->trans('validation.attributes');
+        } else {
+            $customAttributes = $translator->get('validation.attributes');
+        }
 
         // Check if translator has custom validation attributes for the fields
         $fields = array_map(function($field) use ($customAttributes) {
