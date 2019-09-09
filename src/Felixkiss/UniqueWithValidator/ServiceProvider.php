@@ -16,7 +16,7 @@ class ServiceProvider extends BaseServiceProvider
             'uniquewith-validator'
         );
 
-        $message = $this->app->translator->trans('uniquewith-validator::validation.unique_with');
+        $message = $this->app->translator->get('uniquewith-validator::validation.unique_with');
         $this->app->validator->extend('unique_with', Validator::class . '@validateUniqueWith', $message);
         $this->app->validator->replacer('unique_with', function() {
             // Since 5.4.20, the validator is passed in as the 5th parameter.
