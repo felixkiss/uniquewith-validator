@@ -22,7 +22,8 @@ class RuleParser
 
     public function __construct($attribute = null, $value = null, array $parameters = [], array $data = [])
     {
-        $this->primaryField = $this->attribute = $attribute;
+        $parts = array_map('trim', explode('.', $attribute, 2));
+        $this->primaryField = $this->attribute = (count($parts) > 1) ? $parts[1] : $attribute;
         $this->primaryValue = $value;
         $this->parameters = $parameters;
         $this->data = $data;
