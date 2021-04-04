@@ -5,6 +5,7 @@ php:
   - 7.2
   - 7.3
   - 7.4
+  - 8.0
 
 env:
   - LARAVEL=5.5.*
@@ -17,8 +18,6 @@ env:
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - php: 7.4
   exclude:
     - php: 7.1
       env: LARAVEL=^6.0
