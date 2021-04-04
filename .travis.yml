@@ -13,6 +13,7 @@ env:
   - LARAVEL=5.8.*
   - LARAVEL=^6.0
   - LARAVEL=^7.0
+  - LARAVEL=^8.0
 
 matrix:
   fast_finish: true
@@ -23,6 +24,10 @@ matrix:
       env: LARAVEL=^6.0
     - php: 7.1
       env: LARAVEL=^7.0
+    - php: 7.1
+      env: LARAVEL=^8.0
+    - php: 7.2
+      env: LARAVEL=^8.0
 
 cache:
   directories:
