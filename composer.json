@@ -1,5 +1,5 @@
 {
-    "name": "felixkiss/uniquewith-validator",
+    "name": "rymesaint/uniquewith-validator",
     "description": "Custom Laravel Validator for combined unique indexes",
     "keywords": ["laravel"],
     "homepage": "https://github.com/felixkiss/uniquewith-validator",
@@ -31,5 +31,6 @@
             ]
         }
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
